@@ -1,31 +1,60 @@
 # Nexus_Cantina
-Sistema web da Nexus Cantina, com telas para alunos e responsáveis.
 
-## Estrutura principal
+Projeto web da Nexus Cantina estruturado para usar FastAPI e templates HTML.
+
+## Estrutura
 
 ```text
-paginas/
-├── html/
-├── script/
-└── styles/
+Nexus_Cantina/
+├── main.py
+├── database/
+│   └── database.py
+├── models/
+│   └── usuario.py
+├── schemas/
+│   └── usuario.py
+├── routers/
+│   └── paginas.py
+├── templates/
+│   ├── pagamento.html
+│   ├── alertapagamento.html
+│   └── demais páginas HTML
+└── static/
+    ├── css/
+    └── js/
 ```
 
-## Correções realizadas
+## Executar com FastAPI
 
-- A pasta de JavaScript foi padronizada como `paginas/script`.
-- Os arquivos HTML agora usam caminhos no formato `../script/arquivo.js`.
-- O login do responsável redireciona para `telaresponsavel.html` após a
-  validação bem-sucedida.
-- A tela do responsável usa o arquivo
-  `../styles/telaresponsavel.css`, sem acento no nome.
-- O botão **Sair** da tela do responsável retorna para
-  `loginresponsavel.html`.
-- A referência inexistente a `telaaluno.js` foi removida de
-  `telaaluno.html`.
+Instale o Python e, dentro da pasta do projeto, execute:
 
-## Execução
+```bash
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
 
-Abra um dos arquivos de login no navegador:
+Depois abra [http://localhost:8000](http://localhost:8000).
 
-- `paginas/html/loginaluno.html`
-- `paginas/html/loginresponsavel.html`
+## Fluxo do pagamento
+
+1. O aluno adiciona produtos ao carrinho.
+2. No carrinho, escolhe o primeiro ou o segundo intervalo.
+3. A tela de pagamento mostra o resumo do pedido.
+4. Ao clicar em **Confirmar pedido**, aparece a pergunta **Tem certeza?**.
+5. Depois da confirmação, a tela de pedido realizado é exibida.
+
+Um intervalo confirmado fica bloqueado até o fim do dia. O aluno ainda pode
+comprar para o outro intervalo. No dia seguinte, os dois intervalos ficam
+disponíveis novamente.
+
+Por enquanto, esse bloqueio fica salvo no `localStorage` do navegador. Quando
+o banco de dados estiver conectado, a mesma regra também deverá ser validada
+no backend para funcionar entre aparelhos diferentes.
+
+## Backup
+
+Antes desta reorganização foi criado um ZIP completo na Área de Trabalho:
+
+```text
+Nexus_Cantina_backup_antes_pagamento_2026-09-26_015624.zip
+```

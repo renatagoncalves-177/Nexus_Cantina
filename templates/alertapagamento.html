@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/alertapagamento.css">
+    <title>Nexus Cantina - Pedido realizado</title>
+</head>
+
+<body>
+    <main class="confirmacao-pagina">
+        <section class="confirmacao-card">
+            <div class="icone-sucesso" aria-hidden="true">✓</div>
+            <span class="etiqueta">PEDIDO CONFIRMADO</span>
+            <h1>Seu pedido foi realizado!</h1>
+            <p class="mensagem-principal">
+                Agora é só retirar seu pedido na cantina no intervalo escolhido.
+            </p>
+
+            <div class="detalhes-pedido">
+                <div>
+                    <span>Intervalo</span>
+                    <strong id="intervaloConfirmado">Não informado</strong>
+                </div>
+                <div>
+                    <span>Total</span>
+                    <strong id="totalConfirmado">R$ 0,00</strong>
+                </div>
+            </div>
+
+            <p class="aviso-dia-seguinte">
+                Um novo pedido para este intervalo ficará disponível amanhã.
+            </p>
+
+            <div class="acoes">
+                <a href="telaaluno.html" class="botao-principal">Voltar ao início</a>
+                <a href="pedidoaluno.html" class="botao-secundario">Ver produtos</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="../static/js/alertapagamento.js"></script>
+</body>
+</html>

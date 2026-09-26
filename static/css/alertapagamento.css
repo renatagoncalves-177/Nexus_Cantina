@@ -1,0 +1,123 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(145deg, #fff7f7, #f5f5f6);
+    color: #242424;
+}
+
+.confirmacao-pagina {
+    min-height: 100vh;
+    padding: 30px 20px;
+    display: grid;
+    place-items: center;
+}
+
+.confirmacao-card {
+    width: min(560px, 100%);
+    padding: 46px;
+    background: #fff;
+    border: 1px solid #ececee;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 24px 65px rgba(31, 41, 55, 0.1);
+}
+
+.icone-sucesso {
+    width: 74px;
+    height: 74px;
+    margin: 0 auto 22px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 38px;
+    font-weight: 800;
+}
+
+.etiqueta {
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+h1 {
+    margin: 10px 0 12px;
+    font-size: clamp(29px, 6vw, 40px);
+}
+
+.mensagem-principal {
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+.detalhes-pedido {
+    margin: 30px 0 18px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    background: #f9fafb;
+    border-radius: 14px;
+}
+
+.detalhes-pedido div {
+    display: grid;
+    gap: 7px;
+}
+
+.detalhes-pedido span {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.aviso-dia-seguinte {
+    padding: 12px;
+    background: #fff7ed;
+    border-radius: 10px;
+    color: #9a3412;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.acoes {
+    margin-top: 28px;
+    display: grid;
+    gap: 10px;
+}
+
+.acoes a {
+    min-height: 47px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.botao-principal {
+    background: #e52b2b;
+    color: #fff;
+}
+
+.botao-secundario {
+    border: 1px solid #d1d5db;
+    color: #4b5563;
+}
+
+@media (max-width: 520px) {
+    .confirmacao-card {
+        padding: 34px 22px;
+    }
+
+    .detalhes-pedido {
+        grid-template-columns: 1fr;
+    }
+}

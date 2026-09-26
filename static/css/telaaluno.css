@@ -1,0 +1,185 @@
+* {
+     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+            min-height: 100vh;
+        }
+
+header {
+    height: 72px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 55px;
+    border-bottom: 1px solid #e8e8e8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #fff2f2;
+    border: 2px solid #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ef4444;
+    font-size: 8px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 9px;
+}
+
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+nav a:hover {
+    color: #ef4444;
+}
+
+.sair {
+    background: #fff1f1;
+    color: #ef4444;
+    padding: 10px 17px;
+    border-radius: 9px;
+}
+
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 55px 35px;
+}
+
+.boas-vindas {
+    margin-bottom: 35px;
+}
+
+.boas-vindas span {
+    color: #777;
+    font-size: 14px;
+}
+
+.boas-vindas h1 {
+    font-size: 28px;
+    margin-top: 5px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid #e7e7e7;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+.card p {
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+        .card h2 {
+            font-size: 27px;
+        }
+
+        .saldo h2 {
+            color: #24883b;
+        }
+
+        .gasto h2 {
+            color: #ef4444;
+        }
+
+        .pedido {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e7e7e7;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+        }
+
+        .pedido h3 {
+            font-size: 19px;
+            margin-bottom: 7px;
+        }
+
+        .pedido p {
+            font-size: 13px;
+            color: #777;
+        }
+
+.pedido a {
+    text-decoration: none;
+    background: #ef2f2f;
+    color: white;
+    padding: 13px 22px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.pedido a:hover {
+    background: #d92525;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+    header {
+        padding: 0 20px;
+    }
+
+    nav {
+        gap: 13px;
+    }
+
+    .marca h2 {
+        display: none;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .pedido {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+}

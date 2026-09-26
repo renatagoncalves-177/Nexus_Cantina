@@ -1,0 +1,1 @@
+"""Modelos persistidos pela aplicação."""

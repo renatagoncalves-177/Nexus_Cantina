@@ -78,3 +78,42 @@ Copie este modelo e preencha de forma simples:
   de forma transparente as alterações acima.
 
 - `documentacao-ia/REGISTRO_IA.md`: a IA adicionou uma tela de escolha de usuário para definir qual login será acessado.
+
+## 26 de setembro de 2026 — reorganização FastAPI e confirmação do pedido
+
+- `main.py`: a IA corrigiu a configuração do FastAPI para carregar as rotas,
+  os templates e os arquivos estáticos nas novas pastas.
+- `database/database.py`, `models/usuario.py`, `schemas/usuario.py` e
+  `routers/paginas.py`: a IA criou a estrutura base solicitada para o projeto
+  FastAPI. A conexão real com o banco ainda não foi implementada.
+- `templates/*.html`: a IA atualizou os caminhos das páginas, dos estilos e
+  dos scripts para a estrutura `templates` e `static`.
+- `templates/alunosdevendo.html` e `static/css/alunosdevendo.css`: a IA
+  preservou os arquivos criados pela equipe durante a reorganização e ajustou
+  seus caminhos para a nova estrutura.
+- `templates/pagamento.html`: a IA criou a revisão do pedido e a confirmação
+  com a mensagem “Tem certeza?” antes de concluir a compra.
+- `templates/alertapagamento.html`: a IA criou a tela que informa que o pedido
+  foi realizado e mostra o intervalo e o valor confirmados.
+- `static/js/carrinho.js` e `static/js/pagamento.js`: a IA adicionou o bloqueio
+  de uma segunda compra para o mesmo intervalo no mesmo dia. O bloqueio é
+  liberado automaticamente no dia seguinte e, nesta primeira versão, fica
+  salvo no navegador.
+- `static/js/alertapagamento.js`, `static/css/pagamento.css` e
+  `static/css/alertapagamento.css`: a IA criou o comportamento e o visual das
+  novas telas do fluxo de confirmação.
+- `requirements.txt` e `README.md`: a IA documentou as dependências, a nova
+  estrutura, a execução do FastAPI e a regra temporária de intervalo.
+- `documentacao-ia/REGISTRO_IA.md`: a IA adicionou esta entrada para registrar
+  as alterações acima.
+- `paginas/html/pagamento.html`: a IA adicionou um redirecionamento de
+  compatibilidade para o caminho antigo continuar abrindo a nova tela.
+- `templates/pagamento.html`, `templates/alertapagamento.html`,
+  `static/js/pagamento.js`, `static/js/carrinho.js` e `routers/paginas.py`: a
+  IA tornou o fluxo de pagamento compatível tanto com o FastAPI quanto com a
+  abertura direta dos arquivos HTML durante o desenvolvimento.
+- `templates/*.html` e `static/js/*.js`: a IA trocou as rotas absolutas por
+  links relativos com `.html`, permitindo navegar normalmente pelo Live Server
+  na porta 5500 sem perder a compatibilidade com o FastAPI.
+- As imagens e demais elementos visuais do projeto estão sendo produzidos pela
+  equipe no Figma. A IA não criou nem adicionou esses arquivos nesta etapa.

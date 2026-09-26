@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../styles/telaresponsavel.css">
+    <link rel="stylesheet" href="../static/css/telaresponsavel.css">
     <title>Nexus Cantina - Área do Responsável</title>
 
 </head>
@@ -11,11 +11,12 @@
 <body>
     <header>
         <div class="marca">
-            <div class="logo">NEXUS<br>CANTINA</div>
-            <h2>Nexus Cantina</h2>
+            <div class="logo">CANTINA</div>
+            <h2>Cantina</h2>
         </div>
 
         <nav>
+            <a href="telaresponsavel.html">Início</a>
             <a href="pedidoaluno.html">Produtos</a>
             <a href="carrinho.html">Carrinho</a>
             <a href="loginresponsavel.html" class="sair">Sair</a>
@@ -24,14 +25,40 @@
 
     <main>
         <section class="responsavel">
-            <h1>Área do Responsável</h1>
+            <span>Área do Responsável</span>
             <p>Bem-vindo(a) à área do responsável! Aqui você pode gerenciar as informações e atividades relacionadas aos alunos sob sua responsabilidade.</p>
-            
+            <p>Aluno: Nome Sobrenome</p>
             <!-- <div class="opcoes">
                 <a href="gerenciaralunos.html" class="botao">Gerenciar Alunos</a>
                 <a href="historicodecompras.html" class="botao">Histórico de Compras</a>
                 <a href="configuracoes.html" class="botao">Configurações</a>
             </div> -->
         </section>
+
+        <section class="cards">
+
+            <div class="card saldo">
+                <p>Saldo disponível</p>
+                <h2>R$ 110,00</h2>
+            </div>
+
+            <div class="card gasto">
+                <p>Gastos realizados</p>
+                <h2>R$ 29,00</h2>
+            </div>
+
+        </section>
+
+        <section class="saldo">
+            <div>
+                <h2>Adicionar Saldo</h2>
+                <form action="adicionarsaldo.html" method="post">
+                    <label for="valor">Valor:</label>
+                    <input type="number" id="valor" name="valor" step="0.01" required>
+                    <button type="submit">Adicionar</button>
+                </form>
+            </div>
+        </section>
+
     </main>
 </body></html>

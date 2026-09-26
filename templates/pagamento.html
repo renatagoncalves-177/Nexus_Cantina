@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/pagamento.css">
+    <title>Nexus Cantina - Confirmar pedido</title>
+</head>
+
+<body>
+    <header>
+        <div class="marca">
+            <div class="logo">CANTINA</div>
+            <strong>Cantina</strong>
+        </div>
+
+        <nav>
+            <a href="telaaluno.html">Início</a>
+            <a href="pedidoaluno.html">Produtos</a>
+            <a href="carrinho.html">Carrinho</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="titulo-pagina">
+            <span>REVISÃO DO PEDIDO</span>
+            <h1>Confirme seu pedido</h1>
+            <p>Confira os itens e o intervalo antes de finalizar.</p>
+        </section>
+
+        <div class="layout-pagamento">
+            <section class="pedido-card" aria-labelledby="titulo-itens">
+                <h2 id="titulo-itens">Itens do pedido</h2>
+                <div id="listaPedido"></div>
+            </section>
+
+            <aside class="resumo-card">
+                <h2>Resumo</h2>
+
+                <div class="linha-resumo">
+                    <span>Retirada</span>
+                    <strong id="intervaloPedido">Não informado</strong>
+                </div>
+
+                <div class="linha-resumo total">
+                    <span>Total</span>
+                    <strong id="totalPedido">R$ 0,00</strong>
+                </div>
+
+                <p id="avisoPagamento" class="aviso" aria-live="polite"></p>
+
+                <button id="abrirConfirmacao" class="botao-confirmar" type="button">
+                    Confirmar pedido
+                </button>
+
+                <a href="carrinho.html" class="voltar-carrinho">Voltar ao carrinho</a>
+            </aside>
+        </div>
+    </main>
+
+    <div id="modalConfirmacao" class="modal" role="dialog" aria-modal="true"
+        aria-labelledby="tituloConfirmacao" hidden>
+        <div class="modal-conteudo">
+            <div class="icone-confirmacao">?</div>
+            <h2 id="tituloConfirmacao">Tem certeza?</h2>
+            <p>
+                Depois de confirmar, você não poderá fazer outro pedido para
+                este mesmo intervalo hoje.
+            </p>
+
+            <div class="acoes-modal">
+                <button id="cancelarConfirmacao" class="botao-secundario" type="button">
+                    Cancelar
+                </button>
+                <button id="confirmarCompra" class="botao-confirmar" type="button">
+                    Sim, confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../static/js/pagamento.js"></script>
+</body>
+</html>
