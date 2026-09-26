@@ -77,4 +77,4 @@ Copie este modelo e preencha de forma simples:
 - `documentacao-ia/REGISTRO_IA.md`: a IA adicionou esta entrada para registrar
   de forma transparente as alterações acima.
 
-documentacao-ia/REGISTRO_IA.md: a IA adicionou uma tela de escolhausuario, para definir onde será o login.
+- `documentacao-ia/REGISTRO_IA.md`: a IA adicionou uma tela de escolha de usuário para definir qual login será acessado.
