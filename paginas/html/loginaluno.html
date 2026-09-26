@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/loginaluno.css">
+    <title>Nexus Cantina</title>
+</head>
+
+<body>
+
+    <main class="container-login">
+
+        <section class="card-login">
+
+            <div class="logo-area">
+                <div class="logo">
+                    CANTINA
+                </div>
+
+                <h1>Login do Aluno</h1>
+                <p>Acesse sua conta para fazer seus pedidos</p>
+            </div>
+
+            <form id="formLogin">
+
+                <div class="campo">
+                    <label for="matricula">Matrícula</label>
+
+                    <input
+                        type="text"
+                        id="matricula"
+                        placeholder="Digite sua matrícula"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="senha">Senha</label>
+
+                    <input
+                        type="password"
+                        id="senha"
+                        placeholder="Digite sua senha"
+                    >
+                </div>
+
+                <button type="submit" class="botao-login">
+                    Entrar
+                </button>
+
+                <div id="mensagem" class="mensagem"></div>
+
+            </form>
+
+            <div class="rodape-login">
+                Cantina • Área do Aluno
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="../script/loginaluno.js"></script>
+
+</body>
+</html>

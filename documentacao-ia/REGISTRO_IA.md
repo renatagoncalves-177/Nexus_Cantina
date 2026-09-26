@@ -52,3 +52,27 @@ Copie este modelo e preencha de forma simples:
 - `documentacao-ia/REGISTRO_IA.md`: esta seção foi adicionada pela IA depois
   da conferência da conversa “Aguardar imagens Figma” e dos arquivos que
   realmente estão na pasta `paginas`.
+
+## 26 de setembro de 2026 — correções de caminhos e login
+
+- `paginas/scripts/` e `paginas/script/`: a IA renomeou a pasta de scripts
+  para o singular. Os arquivos `carrinho.js`, `loginaluno.js`,
+  `loginresponsavel.js`, `pagamento.js` e `pedidoaluno.js` foram movidos para
+  o novo caminho.
+- `paginas/html/carrinho.html`, `paginas/html/loginaluno.html`,
+  `paginas/html/loginresponsavel.html`, `paginas/html/pagamento.html` e
+  `paginas/html/pedidoaluno.html`: a IA atualizou os caminhos dos arquivos
+  JavaScript de `../scripts/` para `../script/`.
+- `paginas/html/telaaluno.html`: a IA removeu a referência a
+  `telaaluno.js`, pois esse arquivo não existe no projeto e a página não
+  depende dele.
+- `paginas/script/loginresponsavel.js`: a IA substituiu a mensagem exibida
+  apenas no console pelo redirecionamento para `telaresponsavel.html` depois
+  do login bem-sucedido.
+- `paginas/html/telaresponsavel.html`: a IA corrigiu o caminho do CSS sem
+  acento, ajustou o botão **Sair** para `loginresponsavel.html`, corrigiu o
+  título da página e adicionou a tag final `</html>`.
+- `README.md`: a IA documentou a estrutura atual do projeto e resumiu as
+  correções realizadas.
+- `documentacao-ia/REGISTRO_IA.md`: a IA adicionou esta entrada para registrar
+  de forma transparente as alterações acima.
