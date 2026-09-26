@@ -117,3 +117,44 @@ Copie este modelo e preencha de forma simples:
   na porta 5500 sem perder a compatibilidade com o FastAPI.
 - As imagens e demais elementos visuais do projeto estão sendo produzidos pela
   equipe no Figma. A IA não criou nem adicionou esses arquivos nesta etapa.
+
+## 26 de setembro de 2026 — quatro telas de gestão e saldo
+
+- `templates/loginadmin.html` e `static/js/loginadmin.js`: a IA criou o
+  formulário de acesso administrativo de demonstração, com validação,
+  mensagens e opção de mostrar a senha. Não é autenticação real.
+- `templates/telaadmin.html` e `static/js/telaadmin.js`: a IA completou o
+  painel com indicadores, filtros e atualização do preparo e da entrega de
+  pedidos de teste, incluindo a leitura do último pedido local quando existe.
+- `templates/alunosdevendo.html` e `static/js/alunosdevendo.js`: a IA
+  completou a consulta de alunos, filtros, confirmação de recebimentos
+  simulados parciais ou totais e histórico.
+- `templates/adicionarsaldo.html` e `static/js/adicionarsaldo.js`: a IA criou
+  a revisão da recarga simulada, confirmação, cancelamento e histórico,
+  aproveitando o valor informado pelo responsável.
+- `static/js/gestao-dados.js`: a IA concentrou os dados fictícios, cálculos
+  em centavos, armazenamento local, prevenção de repetição da mesma operação
+  e sessão de demonstração. Nenhuma operação cobra dinheiro real.
+- `static/css/gestao.css`: a IA criou os estilos compartilhados e responsivos
+  das quatro telas, seguindo as cores do projeto.
+- `static/js/saldo-demo.js`: a IA adicionou a exibição do mesmo saldo de
+  demonstração nas áreas do aluno e do responsável.
+- `templates/telaaluno.html` e `templates/telaresponsavel.html`: a IA conectou
+  a exibição do saldo local. Na tela do responsável, ajustou o formulário
+  para abrir a revisão da recarga. As alterações recentes da equipe no
+  formulário e no visual foram consideradas, sem substituir seus estilos.
+- `templates/escolhausuario.html`: a IA passou a entrada administrativa
+  pelo formulário de login de demonstração.
+- `routers/paginas.py`: a IA registrou as duas páginas novas na lista de
+  páginas permitidas, mantendo a compatibilidade com os links `.html`.
+- `README.md`: a IA documentou as telas, a navegação e os limites da
+  demonstração local. As imagens continuam sendo produzidas pela equipe
+  no Figma; a IA não criou imagens nesta etapa.
+- `documentacao-ia/REGISTRO_IA.md`: a IA registrou esta etapa. As quatro telas
+  foram preparadas fora da pasta do projeto e testadas juntas no navegador
+  antes da integração, incluindo navegação, filtros, confirmações,
+  cancelamento, persistência e layouts móveis. Também foram verificadas as
+  26 rotas de páginas no FastAPI e seus links e recursos locais. Os arquivos
+  do banco, modelos e schemas não foram alterados nesta etapa.
+- Os dados de demonstração e o armazenamento no navegador são temporários.
+  Eles deverão ser removidos quando o banco interno em Python for conectado.

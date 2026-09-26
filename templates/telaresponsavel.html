@@ -24,22 +24,21 @@
     </header>
 
     <main>
+        <section class="boas-vindas">
+            <p>Área do Responsável</p>
+            <h1>Bem-vindo(a) à área do responsável!</h1>
+        </section>
+
         <section class="responsavel">
-            <span>Área do Responsável</span>
-            <p>Bem-vindo(a) à área do responsável! Aqui você pode gerenciar as informações e atividades relacionadas aos alunos sob sua responsabilidade.</p>
-            <p>Aluno: Nome Sobrenome</p>
-            <!-- <div class="opcoes">
-                <a href="gerenciaralunos.html" class="botao">Gerenciar Alunos</a>
-                <a href="historicodecompras.html" class="botao">Histórico de Compras</a>
-                <a href="configuracoes.html" class="botao">Configurações</a>
-            </div> -->
+            <p>Aqui você pode gerenciar as informações e atividades relacionadas aos alunos sob sua responsabilidade.</p>
+            <p>Aluno: Carlos Silva (demonstração)</p>
         </section>
 
         <section class="cards">
 
             <div class="card saldo">
-                <p>Saldo disponível</p>
-                <h2>R$ 110,00</h2>
+                <p>Saldo disponível (demonstração)</p>
+                <h2 id="saldoDisponivel">R$ 110,00</h2>
             </div>
 
             <div class="card gasto">
@@ -50,15 +49,17 @@
         </section>
 
         <section class="saldo">
-            <div>
-                <h2>Adicionar Saldo</h2>
-                <form action="adicionarsaldo.html" method="post">
-                    <label for="valor">Valor:</label>
-                    <input type="number" id="valor" name="valor" step="0.01" required>
-                    <button type="submit">Adicionar</button>
+            <div class="card">
+                <h3>Adicionar Saldo</h3>
+                <label for="valor">Valor da recarga de teste (R$)</label>
+                <form action="adicionarsaldo.html" method="get" class="formulario">
+                    <input type="text" id="valor" name="valor" placeholder="0,00" required>
+                    <button type="submit" class="botaoAdicionar">Adicionar</button>
                 </form>
             </div>
         </section>
 
     </main>
+    <script src="../static/js/gestao-dados.js"></script>
+    <script src="../static/js/saldo-demo.js"></script>
 </body></html>

@@ -21,6 +21,8 @@ PAGINAS = {
     "pagamento",
     "alertapagamento",
     "alunosdevendo",
+    "loginadmin",
+    "adicionarsaldo",
 }
 
 

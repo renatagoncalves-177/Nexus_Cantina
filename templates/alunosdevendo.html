@@ -3,32 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/alunosdevendo.css">
-    <title>Nexus Cantina - Área do Responsável</title>
-
+    <title>Alunos e pendências - Nexus Cantina</title>
+    <link rel="stylesheet" href="../static/css/gestao.css">
+    <script src="../static/js/gestao-dados.js" defer></script>
+    <script src="../static/js/alunosdevendo.js" defer></script>
 </head>
-
 <body>
-
-    <header>
-        <div class="marca">
-            <div class="logo">CANTINA</div>
-            <h2>Cantina</h2>
+<div data-area-admin hidden>
+<header class="cabecalho-gestao">
+    <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Nexus Cantina</a>
+    <nav aria-label="Navegação principal">
+        <a href="telaadmin.html">Painel</a>
+        <a href="alunosdevendo.html" aria-current="page">Alunos e pendências</a>
+        <a href="loginadmin.html" class="sair-gestao" data-sair-admin>Sair</a>
+    </nav>
+</header>
+<main class="conteudo-gestao">
+    <span class="eyebrow">ÁREA DA CANTINA</span><h1>Alunos e pendências</h1><p class="subtitulo">Encontre um aluno e acompanhe os valores em aberto.</p>
+    <p class="demo-nota"><strong>Ambiente de demonstração.</strong> Dados fictícios e operações de teste, salvos neste navegador. Nenhum valor real é cobrado.</p>
+    <div class="metricas" aria-label="Resumo das pendências">
+        <article class="metrica destaque"><span>Total em aberto</span><strong id="totalEmAberto">R$ 0,00</strong></article>
+        <article class="metrica"><span>Alunos com pendência</span><strong id="quantidadeDevedores">0</strong></article>
+        <article class="metrica"><span>Alunos cadastrados na demonstração</span><strong id="quantidadeAlunos">0</strong></article>
+    </div>
+    <section class="painel">
+        <h2>Consulta de alunos</h2>
+        <div class="filtros">
+            <div class="campo-gestao"><label for="buscaAluno">Nome ou matrícula</label><input type="search" id="buscaAluno" placeholder="Ex.: Ana ou 2026002"></div>
+            <div class="campo-gestao"><label for="filtroTurma">Turma</label><select id="filtroTurma"><option value="">Todas as turmas</option></select></div>
+            <div class="campo-gestao"><label for="filtroDivida">Situação</label><select id="filtroDivida"><option value="pendentes">Com pendência</option><option value="todos">Todos os alunos</option><option value="regular">Sem pendência</option></select></div>
         </div>
-
-        <nav>
-            <a href="alunosdevendo.html">Início</a>
-            <a href="pedidoaluno.html">Produtos</a>
-            <a href="carrinho.html">Carrinho</a>
-            <a href="loginresponsavel.html" class="sair">Sair</a>
-        </nav>
-    </header>
-
-    <main>
-        <form>
-            <input type="search" name="q" placeholder="Pesquisar..." required>
-            <button type="submit">Buscar</button>
-        </form>
-
-    </main>
+        <p id="mensagemAlunos" role="status" aria-live="polite" hidden></p>
+        <div class="table-wrap"><table><caption id="contagemAlunos">Carregando alunos…</caption><thead><tr><th scope="col">Aluno / matrícula</th><th scope="col">Turma</th><th scope="col">Em aberto</th><th scope="col">Situação</th><th scope="col">Ação</th></tr></thead><tbody id="listaAlunos"></tbody></table></div>
+        <div id="vazioAlunos" class="vazio-gestao" hidden><strong>Nenhum aluno encontrado.</strong><p>Experimente outro nome, matrícula ou situação.</p><button type="button" id="limparFiltrosAlunos" class="btn secundario pequeno">Mostrar todos</button></div>
+    </section>
+    <section class="painel"><h2>Recebimentos registrados</h2><p class="ajuda">Histórico de teste deste navegador. O recebimento reduz a pendência e não adiciona saldo.</p><div id="historicoRecebimentos"></div></section>
+</main>
+<dialog id="dialogRecebimento" aria-labelledby="tituloRecebimento">
+    <h2 id="tituloRecebimento">Registrar recebimento</h2>
+    <p id="alunoRecebimento"></p>
+    <form id="formRecebimento">
+        <div class="campo-gestao"><label for="valorRecebido">Valor recebido (R$)</label><input id="valorRecebido" type="number" min="0.01" step="0.01" inputmode="decimal" required></div>
+        <p class="ajuda">Registro simulado. Nenhuma cobrança ou transferência será feita.</p>
+        <p id="erroRecebimento" role="alert" hidden></p>
+        <div class="acoes-gestao"><button type="button" id="cancelarRecebimento" class="btn secundario">Cancelar</button><button type="submit" id="confirmarRecebimento" class="btn">Confirmar registro</button></div>
+    </form>
+</dialog>
+</div>
+<noscript>Ative o JavaScript para visualizar esta demonstração.</noscript>
 </body>
+</html>
