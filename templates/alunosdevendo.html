@@ -11,7 +11,7 @@
 <body data-perfis="admin">
 <div data-area-admin hidden>
 <header class="cabecalho-gestao">
-    <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Nexus Cantina</a>
+    <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Cantina</a>
     <nav aria-label="Navegação principal">
         <a href="telaadmin.html">Painel</a>
         <a href="alunosdevendo.html" aria-current="page">Alunos e pendências</a>
@@ -20,7 +20,7 @@
 </header>
 <main class="conteudo-gestao">
     <span class="eyebrow">ÁREA DA CANTINA</span><h1>Alunos e pendências</h1><p class="subtitulo">Encontre um aluno e acompanhe os valores em aberto.</p>
-    <p class="demo-nota"><strong>Integração em andamento.</strong> Os alunos e as pendências serão carregados do banco em uma próxima etapa.</p>
+    <p class="demo-nota"><strong>Dados conectados.</strong> Consulte saldos negativos e registre recebimentos.</p>
     <div class="metricas" aria-label="Resumo das pendências">
         <article class="metrica destaque"><span>Total em aberto</span><strong id="totalEmAberto">R$ 0,00</strong></article>
         <article class="metrica"><span>Alunos com pendência</span><strong id="quantidadeDevedores">0</strong></article>
@@ -37,7 +37,7 @@
         <div class="table-wrap"><table><caption id="contagemAlunos">Carregando alunos…</caption><thead><tr><th scope="col">Aluno / matrícula</th><th scope="col">Turma</th><th scope="col">Em aberto</th><th scope="col">Situação</th><th scope="col">Ação</th></tr></thead><tbody id="listaAlunos"></tbody></table></div>
         <div id="vazioAlunos" class="vazio-gestao" hidden><strong>Nenhum aluno encontrado.</strong><p>Experimente outro nome, matrícula ou situação.</p><button type="button" id="limparFiltrosAlunos" class="btn secundario pequeno">Mostrar todos</button></div>
     </section>
-    <section class="painel"><h2>Recebimentos registrados</h2><p class="ajuda">O histórico será carregado do banco quando a movimentação de saldo for integrada.</p><div id="historicoRecebimentos"></div></section>
+    <section class="painel"><h2>Recebimentos registrados</h2><p class="ajuda">Consulte abaixo os recebimentos registrados.</p><div id="historicoRecebimentos"></div></section>
 </main>
 <dialog id="dialogRecebimento" aria-labelledby="tituloRecebimento">
     <h2 id="tituloRecebimento">Registrar recebimento</h2>

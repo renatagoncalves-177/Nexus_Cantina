@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     const G = window.NexusGestao;
-    const ALUNO = new URLSearchParams(window.location.search).get("aluno");
+    let ALUNO = new URLSearchParams(window.location.search).get("aluno");
     const valor = document.getElementById("valorRecarga");
     const mensagem = document.getElementById("mensagemRecarga");
     const dialog = document.getElementById("dialogRecarga");
@@ -20,7 +20,7 @@
         try {
             const dados = G.ler();
             const aluno = dados.alunos.find(a => a.id === ALUNO);
-            if (!aluno) throw new Error("Nenhum aluno foi selecionado. A integração dos alunos ainda não foi concluída.");
+            if (!aluno) throw new Error("Nenhum aluno vinculado foi encontrado. Solicite o vínculo à cantina.");
             let adicionar = 0;
             try { adicionar = G.centavos(valor.value); } catch (_) { /* Campo ainda vazio. */ }
             if (adicionar < 100 || adicionar > 50000) adicionar = 0;
@@ -65,11 +65,11 @@
     });
     document.getElementById("cancelarRecarga").addEventListener("click", () => dialog.close());
     dialog.addEventListener("close", () => { revisao = null; });
-    confirmar.addEventListener("click", () => {
+    confirmar.addEventListener("click", async () => {
         if (!revisao || confirmar.disabled) return;
         confirmar.disabled = true;
         try {
-            const dados = G.recarregar(ALUNO, revisao.valor, revisao.id);
+            const dados = await G.recarregar(ALUNO, revisao.valor, revisao.id);
             const novoSaldo = dados.alunos.find(a => a.id === ALUNO).saldo;
             G.aviso(mensagem, "Recarga de " + G.moeda(revisao.valor) + " registrada. Saldo disponível: " + G.moeda(novoSaldo) + ".");
             valor.value = "";
@@ -80,7 +80,18 @@
             confirmar.disabled = false;
         }
     });
-    window.addEventListener("storage", renderizar);
-    window.addEventListener("pageshow", renderizar);
-    renderizar();
+    async function carregar() {
+        try {
+            const dados = await G.carregar();
+            ALUNO = ALUNO || dados.alunos[0]?.id;
+            const aluno = dados.alunos.find(a => a.id === ALUNO);
+            if (aluno) {
+                document.querySelector(".aluno-resumo strong").textContent = aluno.nome;
+                document.querySelector(".aluno-resumo p").textContent = "Matrícula: " + aluno.matricula;
+            }
+            renderizar();
+        } catch (erro) { G.aviso(mensagem, erro.message, true); }
+    }
+    window.addEventListener("focus", carregar);
+    carregar();
 }());

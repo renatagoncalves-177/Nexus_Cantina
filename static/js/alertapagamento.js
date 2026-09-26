@@ -1,114 +1,65 @@
 (function () {
     "use strict";
     const G = window.NexusGestao;
-    const card = document.querySelector(".confirmacao-card");
-    const intervaloElemento = document.getElementById("intervaloConfirmado");
-    const totalElemento = document.getElementById("totalConfirmado");
-    const saldoElemento = document.getElementById("saldoConfirmado");
-    const aviso = document.getElementById("avisoPedido");
-    const alterar = document.getElementById("alterarPedido");
-    const cancelar = document.getElementById("cancelarPedido");
-    let pedido = null;
-
-    function lerPedido() {
-        try { return JSON.parse(localStorage.getItem("ultimoPedido") || "null"); }
-        catch (_) { return null; }
-    }
-
-    function liberarIntervalo(atual) {
-        let registros;
+    const $ = id => document.getElementById(id);
+    let pedido;
+    async function carregar() {
         try {
-            const dados = JSON.parse(localStorage.getItem("intervalosConfirmados") || "{}");
-            registros = dados && typeof dados === "object" && !Array.isArray(dados) ? dados : {};
-        }
-        catch (_) { registros = {}; }
-        const intervalos = Array.isArray(registros[atual.data]) ? registros[atual.data] : [];
-        registros[atual.data] = intervalos.filter((item) => item !== atual.intervalo);
-        if (!registros[atual.data].length) delete registros[atual.data];
-        localStorage.setItem("intervalosConfirmados", JSON.stringify(registros));
-    }
-
-    function saldoAtual() {
-        if (!pedido.alunoId) return null;
-        const aluno = G.ler().alunos.find((item) => item.id === pedido.alunoId);
-        return aluno ? aluno.saldo : null;
-    }
-
-    function renderizar() {
-        pedido = lerPedido();
-        if (!pedido) {
-            document.getElementById("tituloPedido").textContent = "Pedido não encontrado";
-            document.getElementById("mensagemPedido").textContent = "Volte ao cardápio para iniciar um pedido.";
-            aviso.textContent = "Nenhuma confirmação foi encontrada neste navegador.";
-            alterar.hidden = cancelar.hidden = true;
-            return;
-        }
-
-        const status = pedido.status === "entregue" ? "concluido" : (pedido.status || "pendente");
-        intervaloElemento.textContent = pedido.intervalo || "Não informado";
-        const total = Number.isSafeInteger(pedido.totalCentavos)
-            ? pedido.totalCentavos
-            : Math.round(Number(pedido.total || 0) * 100);
-        totalElemento.textContent = G.moeda(total);
-        const saldo = status === "cancelado" ? saldoAtual() : pedido.saldoAposPedido;
-        saldoElemento.textContent = Number.isSafeInteger(saldo) ? G.moeda(saldo) : "—";
-
-        if (status === "cancelado") {
-            card.classList.add("cancelado");
-            document.getElementById("iconePedido").textContent = "×";
-            document.getElementById("statusPedido").textContent = "PEDIDO CANCELADO";
-            document.getElementById("tituloPedido").textContent = pedido.canceladoParaAlteracao ? "Pedido aberto para alteração" : "Pedido cancelado";
-            document.getElementById("mensagemPedido").textContent = pedido.canceladoParaAlteracao
-                ? "Os itens voltaram para o carrinho e o saldo foi devolvido."
-                : "O intervalo foi liberado e o saldo utilizado foi devolvido.";
-            aviso.textContent = pedido.canceladoParaAlteracao ? "Continue a alteração no carrinho." : "Este pedido não será preparado.";
-            alterar.hidden = cancelar.hidden = true;
-            return;
-        }
-
-        if (status === "concluido") {
-            document.getElementById("statusPedido").textContent = "PEDIDO CONCLUÍDO";
-            aviso.textContent = "O pedido já foi concluído e não pode mais ser alterado ou cancelado. Este intervalo ficará indisponível até amanhã.";
-            alterar.hidden = cancelar.hidden = true;
-            return;
-        }
-
-        alterar.hidden = cancelar.hidden = false;
-        aviso.textContent = "Você pode alterar ou cancelar este pedido enquanto ele não estiver concluído.";
-        if (pedido.saldoAposPedido === G.LIMITE_NEGATIVO) {
-            aviso.textContent += " Atenção: seu saldo chegou ao limite negativo de R$ 250,00.";
+            let id = new URLSearchParams(location.search).get("id");
+            if (!id) {
+                try { id = JSON.parse(localStorage.getItem("ultimoPedido") || "{}").id; } catch (_) {}
+            }
+            if (!id) {
+                const pedidos = await G.requisitar("/api/pedidos");
+                id = pedidos.at(-1)?.id;
+            }
+            if (!id) throw new Error("Nenhum pedido encontrado. Inicie um pedido no cardápio.");
+            pedido = await G.requisitar("/api/pedidos/" + encodeURIComponent(id));
+            $("intervaloConfirmado").textContent = pedido.intervalo;
+            $("totalConfirmado").textContent = G.moeda(Math.round(pedido.total * 100));
+            $("saldoConfirmado").textContent = G.moeda(Math.round(pedido.saldo * 100));
+            const encerrado = ["concluido", "cancelado"].includes(pedido.status);
+            $("alterarPedido").hidden = $("cancelarPedido").hidden = encerrado;
+            $("statusPedido").textContent = "PEDIDO " + pedido.status.toUpperCase();
+            $("avisoPedido").textContent = encerrado ? "Este pedido não pode mais ser alterado."
+                : "Você pode alterar ou cancelar este pedido enquanto ele não estiver concluído.";
+            if (pedido.status === "cancelado") {
+                $("tituloPedido").textContent = "Pedido cancelado";
+                $("mensagemPedido").textContent = "Seu saldo e o estoque foram devolvidos. O intervalo está disponível.";
+                $("iconePedido").textContent = "×";
+                document.querySelector(".confirmacao-card").classList.add("cancelado");
+            }
+            if (pedido.saldo === -250) $("avisoPedido").textContent += " Seu saldo chegou ao limite negativo de R$ 250,00.";
+        } catch (e) {
+            $("tituloPedido").textContent = "Não foi possível carregar o pedido";
+            $("avisoPedido").textContent = e.message;
+            $("alterarPedido").hidden = $("cancelarPedido").hidden = true;
         }
     }
-
-    function prepararCancelamento(motivo) {
-        G.importarUltimoPedido();
-        const atualizado = G.cancelarPedido(pedido.id, motivo);
-        liberarIntervalo(atualizado);
-        return atualizado;
-    }
-
-    alterar.addEventListener("click", () => {
-        try {
-            const atualizado = prepararCancelamento("alterar");
-            localStorage.setItem("carrinho", JSON.stringify(atualizado.itens));
-            localStorage.setItem("intervaloPedido", atualizado.intervalo);
-            window.location.href = "carrinho.html";
-        } catch (erro) {
-            aviso.textContent = erro.message;
-        }
+    $("alterarPedido").addEventListener("click", () => {
+        if (!pedido) return;
+        localStorage.setItem("carrinho", JSON.stringify(pedido.itens));
+        localStorage.setItem("intervaloPedido", pedido.intervalo);
+        localStorage.setItem("pedidoEdicao", String(pedido.id));
+        localStorage.removeItem("chaveCompra");
+        location.href = "carrinho.html";
     });
-
-    cancelar.addEventListener("click", () => {
-        if (!window.confirm("Tem certeza que deseja cancelar este pedido?")) return;
+    $("cancelarPedido").addEventListener("click", async () => {
+        if (!pedido || !confirm("Tem certeza que deseja cancelar este pedido?")) return;
+        $("cancelarPedido").disabled = true;
         try {
-            prepararCancelamento("cancelar");
-            renderizar();
-        } catch (erro) {
-            aviso.textContent = erro.message;
-        }
+            await G.requisitar("/api/pedidos/" + pedido.id, { method: "PATCH", body: JSON.stringify({ status: "cancelado" }) });
+            await carregar();
+        } catch (e) { $("avisoPedido").textContent = e.message; }
+        finally { $("cancelarPedido").disabled = false; }
     });
-
-    window.addEventListener("storage", renderizar);
-    window.addEventListener("pageshow", renderizar);
-    renderizar();
+    $("continuarPedido").addEventListener("click", e => {
+        e.preventDefault();
+        $("continuarPedido").disabled = true;
+        $("bannerEmail").textContent = "O e-mail foi enviado com sucesso! (Simulação: nenhum e-mail real foi enviado.)";
+        $("bannerEmail").hidden = false;
+        setTimeout(() => { location.href = "/"; }, 2000);
+    });
+    window.addEventListener("focus", carregar);
+    carregar();
 }());

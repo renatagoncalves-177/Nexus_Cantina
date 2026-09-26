@@ -36,6 +36,7 @@
                 Api.requisitar("/api/vinculos")
             ]);
             preencherSelect(responsavel, Api.lista(dadosResponsaveis, "responsaveis"), "Selecione um responsável");
+            responsavel.add(new Option("Cadastrar novo responsável…", "novo"));
             preencherSelect(aluno, Api.lista(dadosAlunos, "alunos"), "Selecione um aluno");
             renderizar(Api.lista(dadosVinculos, "vinculos"));
             Api.informar(mensagem, "");
@@ -47,6 +48,20 @@
         }
     }
 
+    responsavel.addEventListener("change", async () => {
+        if (responsavel.value !== "novo") return;
+        try {
+            const nome = prompt("Nome completo do responsável:");
+            if (!nome) { responsavel.value = ""; return; }
+            const email = prompt("E-mail do responsável:");
+            if (!email) { responsavel.value = ""; return; }
+            const senha = prompt("Senha inicial de teste (mínimo de 8 caracteres):");
+            if (!senha) { responsavel.value = ""; return; }
+            const novo = await Api.requisitar("/api/responsaveis", { method: "POST", body: { nome, email, senha } });
+            await carregar();
+            responsavel.value = String(novo.id);
+        } catch (erro) { Api.informar(mensagem, erro.message, true); responsavel.value = ""; }
+    });
     formulario.addEventListener("submit", async evento => {
         evento.preventDefault();
         const botao = formulario.querySelector("button[type='submit']");

@@ -44,6 +44,7 @@ class Estudante(Base):
     serie: Mapped[str | None] = mapped_column(String(30))
     turma: Mapped[str | None] = mapped_column(String(30))
     saldo: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=Decimal("0.00"))
+    responsavel_id: Mapped[int | None] = mapped_column(ForeignKey("responsaveis.usuario_id"), unique=True)
 
 
 class Responsavel(Base):

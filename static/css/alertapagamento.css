@@ -135,6 +135,24 @@ h1 {
     color: #6b7280;
 }
 
+.banner-email {
+    margin: 16px 0 0;
+    padding: 14px 18px;
+    background: #dcfce7;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    color: #15803d;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+    animation: deslizar 0.35s ease;
+}
+
+@keyframes deslizar {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 520px) {
     .confirmacao-card {
         padding: 34px 22px;

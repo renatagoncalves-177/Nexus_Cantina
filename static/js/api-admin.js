@@ -21,8 +21,8 @@
         const dados = tipo.includes("application/json") ? await resposta.json() : null;
 
         if (!resposta.ok) {
-            const erro = new Error(dados?.detail || "Não foi possível concluir a operação.");
-            erro.integracaoPendente = [404, 405, 501, 503].includes(resposta.status);
+            const erro = new Error(dados?.message || (typeof dados?.detail === "string" ? dados.detail : "Confira os campos informados."));
+            erro.integracaoPendente = false;
             throw erro;
         }
 

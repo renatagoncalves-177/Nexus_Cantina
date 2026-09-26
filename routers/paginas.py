@@ -1,6 +1,9 @@
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Depends
+from sqlalchemy.orm import Session
+from database.database import get_db_opcional
+from models.usuario import Usuario
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -59,7 +62,11 @@ LOGIN_POR_TIPO = {
 
 
 @router.get("/", response_class=HTMLResponse)
-async def inicio(request: Request):
+async def inicio(request: Request, db: Session | None = Depends(get_db_opcional)):
+    validar_sessao(request, db)
+    destino = DESTINOS_POR_TIPO.get(request.session.get("tipo"))
+    if destino:
+        return RedirectResponse(url="/" + destino, status_code=303)
     return templates.TemplateResponse(
         request=request,
         name="escolhausuario.html",
@@ -67,7 +74,8 @@ async def inicio(request: Request):
 
 
 @router.get("/{nome_pagina}", response_class=HTMLResponse)
-async def exibir_pagina(request: Request, nome_pagina: str):
+async def exibir_pagina(request: Request, nome_pagina: str, db: Session | None = Depends(get_db_opcional)):
+    validar_sessao(request, db)
     pagina_sem_extensao = nome_pagina.removesuffix(".html")
 
     if pagina_sem_extensao not in PAGINAS:
@@ -95,3 +103,13 @@ async def exibir_pagina(request: Request, nome_pagina: str):
         request=request,
         name=f"{pagina_sem_extensao}.html",
     )
+
+
+def validar_sessao(request, db):
+    if not request.session.get("usuario_id"):
+        return
+    usuario = db.get(Usuario, request.session["usuario_id"]) if db is not None else None
+    if not usuario or not usuario.ativo or request.session.get("modo_teste"):
+        request.session.clear()
+    else:
+        request.session["tipo"] = usuario.tipo.value

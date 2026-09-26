@@ -30,7 +30,7 @@
     async function carregar(id) {
         if (!id) {
             conteudo.hidden = true;
-            Api.informar(mensagem, "Informe o número de um pedido. A consulta funcionará quando a API de pedidos estiver conectada.", true);
+            Api.informar(mensagem, "Informe o número de um pedido.", true);
             return;
         }
         document.getElementById("buscarPedidoId").value = id;

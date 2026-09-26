@@ -1,167 +1,87 @@
-# Nexus_Cantina
+# Nexus Cantina
 
-Projeto web da Nexus Cantina estruturado para usar FastAPI e templates HTML.
+Aplicação escolar com FastAPI, SQLAlchemy, HTML, CSS e JavaScript. A versão atual usa SQLite local para desenvolvimento, com usuários, produtos, pedidos e saldos persistidos.
 
-## Estrutura
+## Iniciar
 
-```text
-Nexus_Cantina/
-├── main.py
-├── database/
-│   ├── database.py
-│   └── schema.sql
-├── models/
-│   └── usuario.py
-├── schemas/
-│   └── auth.py
-├── routers/
-│   ├── auth.py
-│   └── paginas.py
-├── services/
-│   └── auth.py
-├── scripts/
-│   ├── criar_usuario.py
-│   └── criar_usuarios_teste.py
-├── templates/
-│   ├── pagamento.html
-│   ├── alertapagamento.html
-│   └── demais páginas HTML
-└── static/
-    ├── css/
-    └── js/
-```
-
-## Executar com FastAPI
-
-1. Crie o banco MySQL executando `database/schema.sql`.
-2. Copie `.env.example` para `.env` e informe sua conexão e uma chave secreta.
-3. Crie e ative o ambiente virtual, instale as dependências e inicie o FastAPI.
-   Neste computador, o `.venv` já foi criado e as dependências já estão
-   instaladas; em outro computador, execute todos os comandos:
+No PowerShell, dentro da pasta do projeto:
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-uvicorn main:app --reload
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m scripts.inicializar_banco
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload
 ```
 
-Depois abra [http://localhost:8000](http://localhost:8000).
+Se o ambiente virtual já existir, pule o primeiro comando. Abra http://127.0.0.1:8000. Não abra os HTMLs por arquivo nem pelo Live Server.
 
-O login deve ser testado pelo FastAPI, e não abrindo os HTMLs diretamente.
-Para criar o primeiro usuário com senha protegida por Argon2, execute:
+Sem DATABASE_URL, o projeto usa nexus_dev.db na raiz. O inicializador cria um backup antes de reaplicar o seed em um banco existente. O seed não apaga registros nem repõe saldos e estoques já utilizados. Banco e backups são ignorados pelo Git.
 
-```bash
-python scripts/criar_usuario.py
-```
+Em outro computador, copie .env.example para .env e configure uma SECRET_KEY aleatória para preservar as sessões entre reinicializações. Não publique .env.
 
-### Contas básicas de teste
+## Contas de desenvolvimento
 
-Depois que o MySQL e o arquivo `.env` estiverem configurados, crie ou redefina
-as três contas de desenvolvimento com:
+- Administrador: admin ou admin@nexuscantina.com.
+- Alunos: aluno01 até aluno50.
+- Responsáveis: responsavel01@teste.example até responsavel50@teste.example.
+- Senha inicial comum do seed: 12345678.
+
+São dados fictícios exclusivamente para teste. As senhas ficam em hash Argon2id no banco. Há exatamente um administrador, cinquenta responsáveis e cinquenta alunos no seed. Cada aluno começa com R$ 50,00 e tem um responsável exclusivo. Sete séries são distribuídas em grupos de sete ou oito alunos.
+
+O banco é a fonte dos logins. As antigas contas em memória não substituem as contas do banco, mesmo que uma configuração antiga ainda ative ENABLE_TEST_USERS.
+
+## Fluxos disponíveis
+
+- Login, sessão, logout e navegação por perfil, com autorização também nos endpoints.
+- Cardápio com 38 produtos, seis categorias e filtragem de produtos indisponíveis.
+- Administrador: cadastro e edição de produtos, estoque, preço, ativação, alunos, responsáveis, vínculos, fila de pedidos e recebimentos.
+- Para editar produto, selecione sua linha na lista; o formulário existente recebe os dados. Categoria e caminho de imagem são solicitados em diálogos, preservando a estrutura visual.
+- Para cadastrar um responsável, use a opção correspondente no seletor da tela de vínculos.
+- Para recarregar, acesse Adicionar saldo na área do responsável ou a página adicionarsaldo.html.
+- Saldo, gastos e pedidos são consultados no banco. O navegador guarda apenas o carrinho e referências para navegação.
+- Compra com confirmação, limite negativo de R$ 250,00 e registro de movimentações.
+- Edição atômica e cancelamento com estorno enquanto o pedido não estiver concluído.
+- Um pedido não cancelado por aluno, dia e intervalo. Cancelamento libera o intervalo; conclusão mantém o bloqueio até o próximo dia.
+- Cantina avança pedidos de pendente para pronto e depois concluído.
+- Aviso de e-mail do pagamento aparece apenas ao clicar em Continuar. E-mails e pagamentos externos continuam sendo simulações; nenhum serviço de envio ou cobrança real foi contratado.
+
+## Transações e concorrência
+
+Execute um único worker para manter a fila FIFO pela chegada ao servidor. As tentativas recebem horário UTC e a resposta mostra milissegundos; empates seguem a ordem de entrada na fila. O dia escolar usa o horário de São Paulo (UTC-3).
+
+SQLite usa BEGIN IMMEDIATE antes de consultar/alterar os pedidos; estoque também é descontado com atualização condicional. Falhas revertem pedido, itens, estoque e saldo. Chaves de operação evitam débito ou recarga duplicados em reenvios.
+
+A fila em memória não fornece ordenação global entre vários workers ou servidores. Uma implantação distribuída exige uma fila compartilhada. Esta entrega é uma aplicação local de desenvolvimento, não uma implantação de produção.
+
+## Banco e imagens
+
+database/schema.sql e database/seed.sql são SQLite. Não execute esses arquivos diretamente no MySQL. Os modelos usam SQLAlchemy, mas uma migração do banco anterior MySQL requer revisão e conversão próprias; não foi executada nesta entrega.
+
+O campo imagem_url contém os caminhos solicitados. As imagens finais estão sendo produzidas pela equipe no Figma; os cards conservam os ícones existentes enquanto esses arquivos não são entregues. Nenhuma imagem foi inventada pela IA.
+
+[Layouts no Figma](https://www.figma.com/design/POPGJzsNhTX5LGz7EpR7d4/Hackaton?node-id=0-1&p=f&t=rFzy5CDQpAEaMaPl-0)
+
+## Testes
 
 ```powershell
-python scripts/criar_usuarios_teste.py --confirmar
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -B -m pytest -q -p no:cacheprovider
 ```
 
-| Perfil | Identificador |
-| --- | --- |
-| Aluno | Matrícula `aluno01` |
-| Responsável | `resp01@teste.com` |
-| Administrador | `admin01@teste.com` |
+A suíte usa bancos temporários. Cobre os 101 logins, permissões, cadastros, vínculos, compra, idempotência, concorrência, rollback, saldo, edição, cancelamento e conclusão. Os cinco testes agrupados passaram durante a implementação. Também foi verificada no navegador a compra completa, desde o login até o pedido pendente. A rodada ampliada de testes foi encerrada a pedido da equipe.
 
-A senha comum é `1234`. Ela pode ser alterada pela variável
-`NEXUS_TEST_PASSWORD` no `.env`. Essas contas são apenas para desenvolvimento
-e não são criadas automaticamente.
+## Estrutura
 
-Enquanto o banco não estiver pronto, o `.env` local pode usar
-`ENABLE_TEST_USERS=true`. Nesse modo, as mesmas três contas autenticam em
-memória, sem gravar nada. Quando o banco estiver integrado, altere para
-`ENABLE_TEST_USERS=false` e execute o script acima para criar as contas no
-banco, se elas ainda forem necessárias.
-
-O login precisa ser aberto pelo FastAPI em
-[http://127.0.0.1:8000](http://127.0.0.1:8000). O Live Server na porta `5500`
-serve apenas arquivos estáticos e não possui a rota `/api/auth/login`.
-
-O navegador mantém uma única sessão ativa para o endereço local. Se outro
-perfil entrar em uma segunda aba, as abas antigas passam a encaminhar para a
-área do perfil mais recente. Nas telas compartilhadas, como produtos,
-carrinho e pagamento, os links de início e saída também se adaptam ao perfil
-da sessão.
-
-O aluno entra com matrícula e senha. Responsáveis e administradores entram com
-e-mail e senha. A sessão fica em um cookie assinado, `HttpOnly`, com duração de
-oito horas. As páginas internas verificam o perfil antes de serem exibidas.
-
-Ao preencher um e-mail válido nas telas de responsável e administrador, o
-navegador mostra um alerta que simula o envio de uma mensagem. Nenhum e-mail
-real é enviado nesta etapa.
-
-## Fluxo do pagamento
-
-As regras abaixo continuam definidas no frontend, mas a confirmação está
-temporariamente desabilitada até saldo e pedidos serem conectados ao banco.
-
-1. O aluno adiciona produtos ao carrinho.
-2. No carrinho, escolhe o primeiro ou o segundo intervalo.
-3. A tela de pagamento mostra o resumo do pedido.
-4. Ao clicar em **Confirmar pedido**, aparece a pergunta **Tem certeza?**.
-5. Depois da confirmação, a tela de pedido realizado é exibida.
-
-Enquanto o pedido ainda não estiver concluído, o aluno pode alterá-lo ou
-cancelá-lo. Nesses casos, o saldo é devolvido e o intervalo é liberado. Depois
-que a cantina marcar o pedido como concluído, ele não poderá mais ser alterado
-ou cancelado, e o intervalo continuará bloqueado até o dia seguinte.
-
-O saldo pode ficar negativo até o limite de `R$ 250,00`. A revisão do pedido
-avisa quando o saldo ficará negativo ou chegar exatamente ao limite e impede
-uma confirmação que ultrapasse esse valor.
-
-Por enquanto, esse bloqueio fica salvo no `localStorage` do navegador. Quando
-o banco de dados estiver conectado, a mesma regra também deverá ser validada
-no backend para funcionar entre aparelhos diferentes.
-
-## Etapa atual da integração
-
-- Os três logins já consultam a tabela `usuarios`.
-- As senhas são comparadas por hash; senhas originais não ficam no banco.
-- As áreas de aluno, responsável e administrador exigem a sessão e o perfil
-  correspondentes.
-- Os dados fictícios iniciais foram removidos.
-- Produtos, pedidos, alunos vinculados, saldos e recargas ainda exibem estados
-  vazios até que suas APIs sejam conectadas ao banco.
-- O SQL já separa produtos de itens do pedido, registra movimentações de saldo
-  e representa pedidos pendentes, prontos, concluídos ou cancelados.
-
-## Telas que dependem do banco
-
-Os logins já possuem backend, mas só autenticam depois que o banco, o `.env` e
-ao menos um usuário estiverem configurados. As telas abaixo estão montadas e
-aguardam os respectivos endpoints:
-
-| Área | Telas | Dados necessários |
-| --- | --- | --- |
-| Login | `loginaluno`, `loginresponsavel`, `loginadmin` | usuários, perfis e senhas em hash |
-| Aluno | `telaaluno`, `pedidoaluno`, `carrinho`, `pagamento`, `alertapagamento` | saldo, produtos, estoque, pedidos e itens |
-| Responsável | `telaresponsavel`, `adicionarsaldo` | alunos vinculados, saldo e movimentações |
-| Cantina | `telaadmin`, `alunosdevendo` | fila de pedidos, saldos e recebimentos |
-| Novos cadastros | `gerenciaralunos`, `gerenciarprodutos`, `vincularaluno` | alunos, produtos e vínculos |
-| Consulta | `detalhepedido` | pedido, itens, aluno e situação |
-
-As quatro telas novas já fazem chamadas isoladas para `/api/alunos`,
-`/api/produtos`, `/api/responsaveis`, `/api/vinculos` e `/api/pedidos/{id}`.
-Enquanto esses endpoints não existirem, elas exibem um aviso de integração
-pendente e não usam dados fictícios. Assim, o futuro backend pode ser ligado
-sem refazer o HTML.
-
-As imagens e os demais elementos visuais continuam sendo produzidos pela
-equipe no Figma. Nenhuma imagem nova foi criada pela IA nesta etapa.
+- main.py: aplicativo, sessão, fila de escritas e registro de rotas.
+- database/: conexão, schema e seed.
+- models/: usuários, produtos, pedidos, itens e movimentações.
+- routers/: autenticação, páginas, produtos, pedidos e gestão.
+- services/: senhas e autorização.
+- static/js/: integração das telas.
+- templates/ e static/css/: visual existente.
+- tests/: testes de integração isolados.
+- documentacao-ia/REGISTRO_IA.md: histórico do uso de IA.
 
 ## Backup da reorganização anterior
 
-Antes desta reorganização foi criado um ZIP completo na Área de Trabalho:
-
-```text
-Nexus_Cantina_backup_antes_pagamento_2026-09-26_015624.zip
-```
+A reorganização anterior foi registrada com o backup Nexus_Cantina_backup_antes_pagamento_2026-09-26_015624.zip na Área de Trabalho. Os novos backups do banco ficam em backups/.

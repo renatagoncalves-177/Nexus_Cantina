@@ -74,13 +74,13 @@
     });
     document.getElementById("cancelarRecebimento").addEventListener("click", () => dialog.close());
     dialog.addEventListener("close", () => { selecionado = null; });
-    document.getElementById("formRecebimento").addEventListener("submit", event => {
+    document.getElementById("formRecebimento").addEventListener("submit", async event => {
         event.preventDefault();
         if (!selecionado || confirmar.disabled || !G.exigirAdmin()) return;
         confirmar.disabled = true;
         try {
             const total = G.centavos(valor.value);
-            G.receber(selecionado.alunoId, total, selecionado.id);
+            await G.receber(selecionado.alunoId, total, selecionado.id);
             G.aviso(mensagem, "Recebimento de teste de " + G.moeda(total) + " registrado.");
             dialog.close();
             renderizar();
@@ -89,7 +89,10 @@
             confirmar.disabled = false;
         }
     });
-    window.addEventListener("storage", renderizar);
-    window.addEventListener("pageshow", () => { if (G.exigirAdmin()) renderizar(); });
-    renderizar();
+    async function carregar() {
+        try { await G.carregar(); renderizar(); }
+        catch (erro) { G.aviso(mensagem, erro.message, true); }
+    }
+    window.addEventListener("focus", carregar);
+    carregar();
 }());

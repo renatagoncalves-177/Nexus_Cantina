@@ -17,7 +17,7 @@ def login(
     request: Request,
     db: Session | None = Depends(get_db_opcional),
 ):
-    conta_teste = autenticar_conta_teste(dados.identificador, dados.senha, dados.tipo)
+    conta_teste = autenticar_conta_teste(dados.identificador, dados.senha, dados.tipo) if db is None else None
     if conta_teste is not None:
         request.session.clear()
         request.session.update(
@@ -67,6 +67,9 @@ def usuario_atual(request: Request, db: Session | None = Depends(get_db_opcional
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Sessão não autenticada.")
 
     if request.session.get("modo_teste"):
+        if db is not None:
+            request.session.clear()
+            raise HTTPException(401, "Entre novamente com uma conta do banco.")
         conta_teste = obter_conta_teste(usuario_id)
         if conta_teste is not None:
             return conta_teste.resposta()

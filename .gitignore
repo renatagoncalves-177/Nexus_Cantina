@@ -29,3 +29,7 @@ __pycache__/
 .venv/
 venv/
 .env
+*.db
+*.db-*
+backups/
+.pytest_cache/

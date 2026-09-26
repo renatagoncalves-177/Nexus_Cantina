@@ -1,12 +1,13 @@
 import os
+from pathlib import Path
 from collections.abc import Generator
 
 from fastapi import HTTPException, status
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 
-DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip() or "sqlite:///" + (Path(__file__).resolve().parent.parent / "nexus_dev.db").as_posix()
 
 
 class Base(DeclarativeBase):
@@ -24,6 +25,7 @@ def _criar_engine():
     argumentos_conexao = {}
     if DATABASE_URL.startswith("sqlite"):
         argumentos_conexao["check_same_thread"] = False
+        argumentos_conexao["timeout"] = 30
 
     return create_engine(
         DATABASE_URL,
@@ -33,6 +35,11 @@ def _criar_engine():
 
 
 engine = _criar_engine()
+if engine is not None and engine.dialect.name == "sqlite":
+    @event.listens_for(engine, "connect")
+    def configurar_sqlite(conexao, _registro):
+        conexao.execute("PRAGMA foreign_keys=ON")
+        conexao.execute("PRAGMA busy_timeout=30000")
 SessionLocal = (
     sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
     if engine is not None

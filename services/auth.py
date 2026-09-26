@@ -1,5 +1,5 @@
 from pwdlib import PasswordHash
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.orm import Session
 
 from models.usuario import TipoUsuario, Usuario
@@ -19,16 +19,21 @@ def autenticar_usuario(
     tipo: TipoUsuario,
 ) -> Usuario | None:
     identificador = identificador.strip().lower()
-    campo = Usuario.matricula if tipo is TipoUsuario.ALUNO else Usuario.email
+    filtro = Usuario.matricula == identificador if tipo is TipoUsuario.ALUNO else or_(Usuario.email == identificador, Usuario.matricula == identificador)
 
     usuario = db.scalar(
         select(Usuario).where(
-            campo == identificador,
+            filtro,
             Usuario.tipo == tipo,
             Usuario.ativo.is_(True),
         )
     )
 
-    if usuario is None or not gerenciador_senhas.verify(senha, usuario.senha_hash):
+    if usuario is None:
+        return None
+    try:
+        if not gerenciador_senhas.verify(senha, usuario.senha_hash):
+            return None
+    except Exception:
         return None
     return usuario

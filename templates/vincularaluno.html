@@ -20,7 +20,7 @@
 </header>
 <main class="conteudo-gestao">
     <div class="topo-gestao"><div><span class="eyebrow">RESPONSÁVEIS</span><h1>Vincular aluno</h1><p class="subtitulo">Defina quais alunos cada responsável poderá consultar e recarregar.</p></div></div>
-    <p class="demo-nota"><strong>Preparada para o banco.</strong> A tela consultará <code>/api/responsaveis</code>, <code>/api/alunos</code> e <code>/api/vinculos</code>. Esses endpoints ainda não foram criados.</p>
+    <p class="demo-nota"><strong>Cadastro disponível.</strong> A tela consulta <code>/api/responsaveis</code>, <code>/api/alunos</code> e <code>/api/vinculos</code>. Os vínculos são salvos no banco.</p>
     <section class="painel" aria-labelledby="tituloNovoVinculo">
         <h2 id="tituloNovoVinculo">Novo vínculo</h2>
         <form id="formVinculo" class="form-grid">
@@ -30,10 +30,10 @@
         </form>
     </section>
     <section class="painel" aria-labelledby="tituloVinculos">
-        <div class="painel-topo"><div><h2 id="tituloVinculos">Vínculos cadastrados</h2><p>Os dados aparecerão após a integração.</p></div><button id="atualizarVinculos" type="button" class="btn secundario pequeno">Atualizar lista</button></div>
+        <div class="painel-topo"><div><h2 id="tituloVinculos">Vínculos cadastrados</h2><p>Consulte os registros cadastrados.</p></div><button id="atualizarVinculos" type="button" class="btn secundario pequeno">Atualizar lista</button></div>
         <p id="mensagemVinculos" role="status" aria-live="polite" hidden></p>
         <div class="table-wrap"><table><caption id="contagemVinculos">0 vínculo(s) cadastrado(s)</caption><thead><tr><th>Responsável</th><th>Aluno</th><th>Situação</th></tr></thead><tbody id="listaVinculos"></tbody></table></div>
-        <div class="vazio-gestao" id="vazioVinculos"><strong>Nenhum vínculo carregado.</strong><p>A lista ficará disponível quando a API for conectada.</p></div>
+        <div class="vazio-gestao" id="vazioVinculos"><strong>Nenhum vínculo carregado.</strong><p>Atualize a lista ou cadastre um registro.</p></div>
     </section>
 </main>
 <script src="../static/js/navegacao-perfil.js"></script>

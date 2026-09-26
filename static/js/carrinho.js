@@ -36,14 +36,8 @@ function obterChaveHoje() {
     return `${ano}-${mes}-${dia}`;
 }
 
-function lerIntervalosConfirmados() {
-    try {
-        const dados = JSON.parse(localStorage.getItem("intervalosConfirmados") || "{}");
-        return dados && typeof dados === "object" && !Array.isArray(dados) ? dados : {};
-    } catch (_erro) {
-        return {};
-    }
-}
+let intervalosServidor = {};
+function lerIntervalosConfirmados() { return intervalosServidor; }
 
 function atualizarIntervalosDisponiveis() {
     const registros = lerIntervalosConfirmados();
@@ -175,6 +169,17 @@ function continuarPagamento() {
     window.location.href = "pagamento.html";
 }
 
-atualizarIntervalosDisponiveis();
+async function carregarIntervalos() {
+    try {
+        const resposta = await fetch("/api/pedidos", { cache: "no-store" });
+        if (!resposta.ok) return;
+        const pedidos = await resposta.json();
+        const hoje = obterChaveHoje();
+        const edicao = localStorage.getItem("pedidoEdicao");
+        intervalosServidor = { [hoje]: pedidos.filter(p => p.data === hoje && p.status !== "cancelado" && String(p.id) !== edicao).map(p => p.intervalo) };
+        atualizarIntervalosDisponiveis();
+    } catch (_) { /* A validação final ocorre na transação do servidor. */ }
+}
+carregarIntervalos();
 renderizar();
 document.getElementById("continuarPagamento").addEventListener("click", continuarPagamento);

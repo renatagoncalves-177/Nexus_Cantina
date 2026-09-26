@@ -1,146 +1,121 @@
-CREATE DATABASE IF NOT EXISTS nexus_cantina
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
+-- SQLite de desenvolvimento. Gerado a partir dos modelos SQLAlchemy.
+PRAGMA foreign_keys=ON;
+CREATE TABLE IF NOT EXISTS produtos (
+	id INTEGER NOT NULL, 
+	nome VARCHAR(120) NOT NULL, 
+	descricao VARCHAR(255), 
+	preco NUMERIC(10, 2) NOT NULL, 
+	estoque INTEGER NOT NULL, 
+	categoria VARCHAR(80) NOT NULL, 
+	imagem_url VARCHAR(255), 
+	ativo BOOLEAN NOT NULL, 
+	emoji VARCHAR(10), 
+	criado_em DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+	atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+	PRIMARY KEY (id), 
+	CONSTRAINT chk_preco_produto CHECK (preco >= 0), 
+	CONSTRAINT chk_estoque_produto CHECK (estoque >= 0)
+)
 
-USE nexus_cantina;
+;
 
-CREATE TABLE usuarios (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(120) NOT NULL,
-    email VARCHAR(160) UNIQUE,
-    matricula VARCHAR(30) UNIQUE,
-    senha_hash VARCHAR(255) NOT NULL,
-    tipo ENUM('aluno', 'responsavel', 'admin') NOT NULL,
-    ativo BOOLEAN NOT NULL DEFAULT TRUE,
-    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+CREATE TABLE IF NOT EXISTS usuarios (
+	id INTEGER NOT NULL, 
+	nome VARCHAR(120) NOT NULL, 
+	email VARCHAR(160), 
+	matricula VARCHAR(30), 
+	senha_hash VARCHAR(255) NOT NULL, 
+	tipo VARCHAR(20) NOT NULL, 
+	ativo BOOLEAN NOT NULL, 
+	criado_em DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+	PRIMARY KEY (id)
+)
 
-    CONSTRAINT chk_identificador_usuario CHECK (
-        (tipo = 'aluno' AND matricula IS NOT NULL)
-        OR
-        (tipo IN ('responsavel', 'admin') AND email IS NOT NULL)
-    )
-);
+;
 
-CREATE TABLE estudantes (
-    usuario_id INT PRIMARY KEY,
-    serie VARCHAR(30),
-    turma VARCHAR(30),
-    saldo DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+CREATE TABLE IF NOT EXISTS administradores (
+	usuario_id INTEGER NOT NULL, 
+	PRIMARY KEY (usuario_id), 
+	FOREIGN KEY(usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+)
 
-    CONSTRAINT chk_limite_saldo CHECK (saldo >= -250.00),
-    CONSTRAINT fk_estudante_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-        ON DELETE CASCADE
-);
+;
 
-CREATE TABLE responsaveis (
-    usuario_id INT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS responsaveis (
+	usuario_id INTEGER NOT NULL, 
+	PRIMARY KEY (usuario_id), 
+	FOREIGN KEY(usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+)
 
-    CONSTRAINT fk_responsavel_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-        ON DELETE CASCADE
-);
+;
 
-CREATE TABLE administradores (
-    usuario_id INT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS estudantes (
+	usuario_id INTEGER NOT NULL, 
+	serie VARCHAR(30), 
+	turma VARCHAR(30), 
+	saldo NUMERIC(10, 2) NOT NULL, 
+	responsavel_id INTEGER, 
+	PRIMARY KEY (usuario_id), 
+	CONSTRAINT chk_limite_saldo CHECK (saldo >= -250.00), 
+	FOREIGN KEY(usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE, 
+	UNIQUE (responsavel_id), 
+	FOREIGN KEY(responsavel_id) REFERENCES responsaveis (usuario_id)
+)
 
-    CONSTRAINT fk_administrador_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-        ON DELETE CASCADE
-);
+;
 
-CREATE TABLE responsavel_estudante (
-    responsavel_id INT NOT NULL,
-    estudante_id INT NOT NULL,
-    PRIMARY KEY (responsavel_id, estudante_id),
+CREATE TABLE IF NOT EXISTS pedidos (
+	id INTEGER NOT NULL, 
+	estudante_id INTEGER NOT NULL, 
+	data_pedido DATE NOT NULL, 
+	intervalo VARCHAR(30) NOT NULL, 
+	intervalo_ativo VARCHAR(30), 
+	status VARCHAR(20) NOT NULL, 
+	total NUMERIC(10, 2) NOT NULL, 
+	criado_em DATETIME NOT NULL, 
+	chave VARCHAR(80) NOT NULL, 
+	PRIMARY KEY (id), 
+	UNIQUE (estudante_id, data_pedido, intervalo_ativo), 
+	CHECK (total >= 0), 
+	CHECK (status IN ('pendente', 'pronto', 'concluido', 'cancelado')), 
+	FOREIGN KEY(estudante_id) REFERENCES estudantes (usuario_id), 
+	UNIQUE (chave)
+)
 
-    CONSTRAINT fk_vinculo_responsavel
-        FOREIGN KEY (responsavel_id) REFERENCES responsaveis(usuario_id)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_vinculo_estudante
-        FOREIGN KEY (estudante_id) REFERENCES estudantes(usuario_id)
-        ON DELETE CASCADE
-);
+;
 
-CREATE TABLE produtos (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(120) NOT NULL,
-    descricao VARCHAR(255),
-    preco DECIMAL(10,2) NOT NULL,
-    quantidade_estoque INT NOT NULL DEFAULT 0,
-    ativo BOOLEAN NOT NULL DEFAULT TRUE,
-    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+CREATE TABLE IF NOT EXISTS itens_pedido (
+	id INTEGER NOT NULL, 
+	pedido_id INTEGER NOT NULL, 
+	produto_id INTEGER NOT NULL, 
+	nome VARCHAR(120) NOT NULL, 
+	quantidade INTEGER NOT NULL, 
+	preco NUMERIC(10, 2) NOT NULL, 
+	PRIMARY KEY (id), 
+	UNIQUE (pedido_id, produto_id), 
+	CHECK (quantidade > 0), 
+	FOREIGN KEY(pedido_id) REFERENCES pedidos (id), 
+	FOREIGN KEY(produto_id) REFERENCES produtos (id)
+)
 
-    CONSTRAINT chk_preco_produto CHECK (preco >= 0),
-    CONSTRAINT chk_estoque_produto CHECK (quantidade_estoque >= 0)
-);
+;
 
-CREATE TABLE pedidos (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    estudante_id INT NOT NULL,
-    data_pedido DATE NOT NULL,
-    intervalo ENUM('primeiro', 'segundo') NOT NULL,
-    status ENUM('pendente', 'pronto', 'concluido', 'cancelado') NOT NULL DEFAULT 'pendente',
-    total DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    intervalo_bloqueado VARCHAR(20)
-        GENERATED ALWAYS AS (
-            CASE WHEN status <> 'cancelado' THEN intervalo ELSE NULL END
-        ) STORED,
+CREATE TABLE IF NOT EXISTS movimentacoes_saldo (
+	id INTEGER NOT NULL, 
+	estudante_id INTEGER NOT NULL, 
+	pedido_id INTEGER, 
+	tipo VARCHAR(20) NOT NULL, 
+	valor NUMERIC(10, 2) NOT NULL, 
+	saldo_apos NUMERIC(10, 2) NOT NULL, 
+	criado_em DATETIME NOT NULL, 
+	chave VARCHAR(100) NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(estudante_id) REFERENCES estudantes (usuario_id), 
+	FOREIGN KEY(pedido_id) REFERENCES pedidos (id), 
+	UNIQUE (chave)
+)
 
-    CONSTRAINT chk_total_pedido CHECK (total >= 0),
-    CONSTRAINT uq_pedido_intervalo_dia
-        UNIQUE (estudante_id, data_pedido, intervalo_bloqueado),
-    CONSTRAINT fk_pedido_estudante
-        FOREIGN KEY (estudante_id) REFERENCES estudantes(usuario_id)
-        ON DELETE RESTRICT
-);
-
-CREATE TABLE itens_pedido (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    pedido_id INT NOT NULL,
-    produto_id INT NOT NULL,
-    quantidade INT NOT NULL,
-    preco_unitario DECIMAL(10,2) NOT NULL,
-
-    CONSTRAINT chk_quantidade_item CHECK (quantidade > 0),
-    CONSTRAINT chk_preco_item CHECK (preco_unitario >= 0),
-    CONSTRAINT uq_produto_por_pedido UNIQUE (pedido_id, produto_id),
-    CONSTRAINT fk_item_pedido
-        FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_item_produto
-        FOREIGN KEY (produto_id) REFERENCES produtos(id)
-        ON DELETE RESTRICT
-);
-
-CREATE TABLE movimentacoes_saldo (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    estudante_id INT NOT NULL,
-    pedido_id INT,
-    tipo ENUM('recarga', 'debito', 'estorno') NOT NULL,
-    valor DECIMAL(10,2) NOT NULL,
-    saldo_apos DECIMAL(10,2) NOT NULL,
-    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT chk_valor_movimentacao CHECK (valor > 0),
-    CONSTRAINT chk_saldo_apos_movimentacao CHECK (saldo_apos >= -250.00),
-    CONSTRAINT fk_movimentacao_estudante
-        FOREIGN KEY (estudante_id) REFERENCES estudantes(usuario_id)
-        ON DELETE RESTRICT,
-    CONSTRAINT fk_movimentacao_pedido
-        FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
-        ON DELETE RESTRICT
-);
-
-CREATE INDEX idx_pedidos_fila
-    ON pedidos (data_pedido, status, intervalo);
-
-CREATE INDEX idx_movimentacoes_estudante
-    ON movimentacoes_saldo (estudante_id, criado_em);
-
--- Totais, estoque, saldo e estornos devem ser alterados em uma transação no
--- backend. Não há triggers para evitar regras duplicadas ou execuções parciais.
+;
+CREATE UNIQUE INDEX IF NOT EXISTS ix_usuarios_email ON usuarios (email);
+CREATE INDEX IF NOT EXISTS ix_usuarios_tipo ON usuarios (tipo);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_usuarios_matricula ON usuarios (matricula);

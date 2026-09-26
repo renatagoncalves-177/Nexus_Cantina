@@ -10,7 +10,7 @@
 </head>
 <body data-perfis="admin">
 <header class="cabecalho-gestao">
-    <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Nexus Cantina</a>
+    <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Cantina</a>
     <nav aria-label="Navegação principal">
         <a href="telaadmin.html">Painel</a>
         <a href="gerenciaralunos.html">Alunos</a>
@@ -20,7 +20,7 @@
 </header>
 <main class="conteudo-gestao">
     <div class="topo-gestao"><div><span class="eyebrow">CARDÁPIO E ESTOQUE</span><h1>Gerenciar produtos</h1><p class="subtitulo">Cadastre os itens que serão exibidos no cardápio e acompanhe sua disponibilidade.</p></div></div>
-    <p class="demo-nota"><strong>Preparada para o banco.</strong> Esta tela usará <code>GET /api/produtos</code> e <code>POST /api/produtos</code>. Os endpoints ainda não foram criados.</p>
+    <p class="demo-nota"><strong>Cadastro disponível.</strong> Esta tela utiliza <code>GET /api/produtos</code> e <code>POST /api/produtos</code>. As alterações são salvas no banco.</p>
     <section class="painel" aria-labelledby="tituloCadastroProduto">
         <h2 id="tituloCadastroProduto">Novo produto</h2>
         <form id="formProduto" class="form-grid">
@@ -33,10 +33,10 @@
         </form>
     </section>
     <section class="painel" aria-labelledby="tituloListaProdutos">
-        <div class="painel-topo"><div><h2 id="tituloListaProdutos">Produtos cadastrados</h2><p>Os dados aparecerão após a integração.</p></div><button id="atualizarProdutos" type="button" class="btn secundario pequeno">Atualizar lista</button></div>
+        <div class="painel-topo"><div><h2 id="tituloListaProdutos">Produtos cadastrados</h2><p>Consulte os registros cadastrados.</p></div><button id="atualizarProdutos" type="button" class="btn secundario pequeno">Atualizar lista</button></div>
         <p id="mensagemProdutos" role="status" aria-live="polite" hidden></p>
         <div class="table-wrap"><table><caption id="contagemProdutos">0 produto(s) cadastrado(s)</caption><thead><tr><th>Produto</th><th>Preço</th><th>Estoque</th><th>Situação</th></tr></thead><tbody id="listaProdutos"></tbody></table></div>
-        <div class="vazio-gestao" id="vazioProdutos"><strong>Nenhum produto carregado.</strong><p>A lista ficará disponível quando a API for conectada.</p></div>
+        <div class="vazio-gestao" id="vazioProdutos"><strong>Nenhum produto carregado.</strong><p>Atualize a lista ou cadastre um registro.</p></div>
     </section>
 </main>
 <script src="../static/js/navegacao-perfil.js"></script>

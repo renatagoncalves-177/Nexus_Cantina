@@ -36,10 +36,15 @@
                 Você pode alterar ou cancelar este pedido enquanto ele não estiver concluído.
             </p>
 
+            <!-- Banner de confirmação de e-mail: oculto até clicar em Continuar -->
+            <div id="bannerEmail" class="banner-email" hidden role="alert" aria-live="assertive">
+                ✉️ O e-mail foi enviado com sucesso!
+            </div>
+
             <div class="acoes" id="acoesPedido">
                 <button type="button" id="alterarPedido" class="botao-secundario">Alterar pedido</button>
                 <button type="button" id="cancelarPedido" class="botao-perigo">Cancelar pedido</button>
-                <a href="telaaluno.html" class="botao-principal" data-inicio-perfil>Voltar ao início</a>
+                <button type="button" id="continuarPedido" class="botao-principal">Continuar</button>
             </div>
         </section>
     </main>

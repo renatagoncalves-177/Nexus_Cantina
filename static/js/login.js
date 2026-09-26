@@ -14,6 +14,11 @@
     const botao = form.querySelector("[data-botao-login]");
     const mostrarSenha = form.querySelector("[data-mostrar-senha]");
     const textoOriginalBotao = botao.textContent;
+    if (form.dataset.tipo === "admin") {
+        identificador.type = "text";
+        identificador.placeholder = "admin ou e-mail";
+        form.querySelector("label[for='identificador']").textContent = "Matrícula ou e-mail";
+    }
 
     function exibirMensagem(texto, erro = true) {
         mensagem.textContent = texto;
@@ -34,7 +39,7 @@
         let ultimoEmailAlertado = "";
         campoEmail.addEventListener("change", () => {
             const email = campoEmail.value.trim().toLowerCase();
-            if (campoEmail.checkValidity() && email !== ultimoEmailAlertado) {
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && campoEmail.checkValidity() && email !== ultimoEmailAlertado) {
                 window.alert(`Simulação: um e-mail foi enviado para ${email}. Nenhum e-mail real foi enviado.`);
                 ultimoEmailAlertado = email;
             }
@@ -64,11 +69,12 @@
                 if (resposta.status === 404) {
                     throw new Error("Abra o projeto pelo FastAPI em http://127.0.0.1:8000. O login não funciona pelo Live Server.");
                 }
-                throw new Error(dados.detail || "Não foi possível entrar agora.");
+                throw new Error(dados.message || (typeof dados.detail === "string" ? dados.detail : "Confira o identificador e a senha."));
             }
 
             exibirMensagem(`Bem-vindo(a), ${dados.nome}.`, false);
             senha.value = "";
+            ["carrinho", "ultimoPedido", "intervaloPedido", "intervalosConfirmados", "pedidoEdicao", "chaveCompra"].forEach(chave => localStorage.removeItem(chave));
             window.location.href = form.dataset.destino;
         } catch (erro) {
             const mensagemErro = erro instanceof TypeError

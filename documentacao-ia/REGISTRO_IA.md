@@ -351,3 +351,81 @@ Copie este modelo e preencha de forma simples:
   de sessão.
 - Todo o restante do progresso descrito neste registro foi preparado para um
   único commit de consolidação, sem adicionar o banco de dados de negócio.
+
+## 26 de setembro de 2026 — cardápio dinâmico, race condition e alerta de pagamento
+
+- `database/schema.sql`: a IA adicionou a coluna `emoji VARCHAR(10)` na tabela
+  `produtos`. Essa coluna é necessária para exibir ícones no cardápio do aluno.
+
+- `database/seed.sql`: a IA criou o script de dados iniciais com 1
+  administrador, 25 responsáveis com seus perfis, 25 alunos com perfis de
+  estudante (saldo inicial de R$ 20,00), vínculos entre responsável e aluno e
+  38 produtos organizados em categorias (lanches, salgados, refeições, doces,
+  bebidas e combos), todos com nome, descrição, preço, estoque e emoji. As
+  senhas usam hash Argon2id no padrão do backend, com placeholder para
+  substituição antes da produção.
+
+- `models/produto.py`: a IA criou o model SQLAlchemy da tabela `produtos`,
+  incluindo o campo `emoji` e refletindo as constraints do schema.
+
+- `routers/produtos.py`: a IA criou o router com dois endpoints:
+  - `GET /api/produtos/` — lista produtos ativos com estoque > 0;
+  - `POST /api/produtos/comprar` — compra atômica com `SELECT … FOR UPDATE`
+    para evitar race condition. Se o estoque acabar durante a transação, o
+    backend faz rollback imediato, não desconta nenhum valor do aluno e retorna
+    HTTP 400 com a mensagem "Que pena! O item esgotou segundos atrás. Seu
+    saldo não foi alterado.".
+
+- `main.py`: a IA registrou o novo router de produtos no aplicativo FastAPI,
+  antes do router de páginas.
+
+- `static/js/pedidoaluno.js`: a IA reescreveu o arquivo para buscar os
+  produtos via `fetch('/api/produtos/')` em vez de um array fixo. O loop
+  filtra automaticamente qualquer produto com `estoque <= 0` recebido da API,
+  mantendo todas as classes CSS existentes dos cards. Mensagens amigáveis são
+  exibidas em caso de erro ou cardápio vazio.
+
+- `templates/alertapagamento.html`: a IA adicionou o botão **Continuar** e um
+  painel de confirmação de e-mail (`#bannerEmail`) inicialmente oculto. O link
+  "Voltar ao início" foi substituído pelo botão, cuja ação é controlada
+  exclusivamente via JavaScript.
+
+- `static/js/alertapagamento.js`: a IA corrigiu o comportamento do alerta de
+  pagamento. Nenhum `alert()`, modal ou aviso é disparado no carregamento da
+  página. Ao clicar em **Continuar**, o JavaScript chama
+  `event.preventDefault()`, exibe o banner de e-mail enviado com animação e,
+  após 2 segundos, redireciona para a tela inicial do perfil. Todo o restante
+  do fluxo (alterar, cancelar, estados de pedido) permanece intacto.
+
+- `static/css/alertapagamento.css`: a IA adicionou o estilo `.banner-email`
+  com animação de entrada, usando a paleta verde já existente no arquivo.
+
+## 26 de setembro de 2026 — seed de teste com logins prontos
+
+- `database/seed_teste.sql`: a IA criou um seed enxuto para testes de
+  software. Contém 1 administrador, 2 responsáveis, 2 alunos e os 38
+  produtos com estoque. As senhas foram geradas com o próprio pwdlib do
+  projeto (Argon2id) e estão prontas para uso imediato — sem placeholders.
+
+## 26 de setembro de 2026 — integração SQLite e gestão
+
+Esta etapa substitui os seeds e o fluxo financeiro local descritos anteriormente.
+
+- `.gitignore` ignora bancos, backups e cache de testes; `.env.example` apresenta a configuração local. O `.env` real foi preservado e não será publicado.
+- `database/database.py`, `database/schema.sql`, `database/seed.sql` e `database/seed_teste.sql`: SQLite de desenvolvimento, chaves estrangeiras, um administrador, cinquenta alunos, cinquenta responsáveis, vínculo individual, sete séries, saldo inicial e trinta e oito produtos. Os hashes de senha são válidos; reexecutar o seed preserva saldos e estoque existentes.
+- `scripts/inicializar_banco.py` inicializa o banco com backup prévio quando ele já existe. `scripts/criar_usuarios_teste.py` encaminha o comando antigo ao inicializador sem redefinir contas.
+- `models/usuario.py`, `models/produto.py` e `models/pedido.py`: vínculo do responsável, padronização de estoque, categoria, caminho de imagem, pedidos, itens e movimentações.
+- `services/auth.py`, `services/permissoes.py`, `routers/auth.py` e `routers/paginas.py`: autenticação no banco, identificação administrativa, autorização por perfil/vínculo, validação de sessão e página inicial do perfil.
+- `routers/produtos.py` e `routers/alunos.py`: cadastro/edição/desativação de produtos, alunos, responsáveis, vínculos, saldos, recargas e recebimentos.
+- `routers/pedidos.py` e `main.py`: registro das rotas, erros JSON, transações de compra/edição/estorno, limite negativo, intervalo diário e chaves contra duplicidade. SQLite usa BEGIN IMMEDIATE. A fila de chegada é local e exige um único worker; não foi apresentada como uma fila distribuída.
+- `static/js/gestao-dados.js`, `static/js/telaadmin.js`, `static/js/alunosdevendo.js` e `static/js/adicionarsaldo.js`: integração da gestão com dados persistidos, substituindo as movimentações locais.
+- `static/js/api-admin.js`, `static/js/login.js`, `static/js/detalhepedido.js` e `static/js/usuario-atual.js`: tratamento dos retornos, limpeza do carrinho ao entrar em outra conta, saldo, gastos, vínculo e pedido aberto.
+- `static/js/gerenciarprodutos.js` reutiliza o formulário existente para editar produtos; categoria e imagem usam diálogos. `static/js/vincularaluno.js` acrescenta a opção de cadastrar responsável no seletor existente.
+- `static/js/pedidoaluno.js` preserva o carregamento dinâmico já iniciado. `static/js/carrinho.js` consulta intervalos no servidor. `static/js/pagamento.js` consulta preços/saldo e envia compra/edição à API. `static/js/alertapagamento.js` consulta o pedido real, permite alteração/cancelamento e mostra a simulação de e-mail somente em Continuar.
+- Textos desatualizados corrigidos, sem trocar a estrutura/classes/IDs, em `templates/adicionarsaldo.html`, `templates/alunosdevendo.html`, `templates/detalhepedido.html`, `templates/gerenciaralunos.html`, `templates/gerenciarprodutos.html`, `templates/telaadmin.html`, `templates/telaresponsavel.html` e `templates/vincularaluno.html`.
+- As alterações em `static/css/alertapagamento.css`, `templates/alertapagamento.html` e `templates/telaaluno.html` já estavam presentes no início desta rodada e foram preservadas. O visual existente foi mantido.
+- `requirements-dev.txt` e `tests/test_fluxos.py`: cinco testes agrupados passaram em bancos temporários, abrangendo os 101 logins, permissões, cadastros, vínculos, compra, concorrência, rollback, idempotência, saldo, recarga, edição, cancelamento e conclusão. A sintaxe dos JavaScripts foi verificada. Ajustes pontuais posteriores não receberam nova rodada completa: a equipe solicitou encerrar os testes com urgência.
+- No navegador foi observado login, cardápio, carrinho, confirmação e pedido pendente com saldo atualizado em uma cópia isolada do banco. Não foi afirmada ausência absoluta de bugs ou inspeção visual de todas as páginas.
+- `README.md` documenta execução, contas, fluxos, testes e limitações. As imagens continuam em produção pela equipe no Figma; nenhum PNG final foi criado pela IA. E-mail e cobrança externa continuam simulados. A persistência interna é real.
+- O banco de demonstração foi inicializado sem os pedidos dos testes. Não houve migração de um banco MySQL existente. A equipe autorizou commit e envio ao GitHub.
+

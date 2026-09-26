@@ -21,7 +21,11 @@
             for (const pedido of filtrados) {
                 const tr = document.createElement("tr");
                 const identificacao = document.createElement("td");
-                identificacao.append(G.elemento("strong", pedido.aluno), G.elemento("small", pedido.id + (pedido.exemplo ? " • Exemplo" : " • Deste navegador")), G.elemento("small", pedido.descricao));
+                identificacao.append(G.elemento("strong", pedido.aluno), G.elemento("small", "Pedido " + pedido.id), G.elemento("small", pedido.descricao));
+                identificacao.tabIndex = 0;
+                identificacao.setAttribute("role", "link");
+                identificacao.onclick = () => { location.href = "detalhepedido.html?id=" + pedido.id; };
+                identificacao.onkeydown = e => { if (e.key === "Enter") identificacao.click(); };
                 const situacao = document.createElement("td");
                 situacao.append(G.elemento("span", rotulos[pedido.status], "badge " + pedido.status));
                 const acao = document.createElement("td");
@@ -29,10 +33,11 @@
                     const botao = G.elemento("button", pedido.status === "pendente" ? "Marcar pronto" : "Marcar concluído", "btn pequeno secundario");
                     botao.type = "button";
                     botao.setAttribute("aria-label", botao.textContent + ": " + pedido.id);
-                    botao.addEventListener("click", () => {
+                    botao.addEventListener("click", async () => {
                         if (!G.exigirAdmin()) return;
                         try {
-                            G.avancarPedido(pedido.id, pedido.status);
+                            botao.disabled = true;
+                            await G.avancarPedido(pedido.id, pedido.status);
                             G.aviso(mensagem, "Pedido " + pedido.id + " atualizado.");
                         } catch (erro) { G.aviso(mensagem, erro.message, true); }
                         renderizar();
@@ -46,9 +51,9 @@
             document.getElementById("vazioPedidos").hidden = filtrados.length > 0;
         } catch (erro) { G.aviso(mensagem, erro.message, true); }
     }
-    function atualizar() {
+    async function atualizar() {
         if (!G.exigirAdmin()) return;
-        try { G.importarUltimoPedido(); } catch (erro) { G.aviso(mensagem, erro.message, true); }
+        try { await G.carregar(); } catch (erro) { G.aviso(mensagem, erro.message, true); }
         renderizar();
     }
     [busca, intervalo, status].forEach(el => el.addEventListener("input", renderizar));
