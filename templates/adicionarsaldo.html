@@ -8,23 +8,23 @@
     <script src="../static/js/gestao-dados.js" defer></script>
     <script src="../static/js/adicionarsaldo.js" defer></script>
 </head>
-<body>
+<body data-perfis="responsavel">
 <header class="cabecalho-gestao">
-    <a href="telaresponsavel.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Nexus Cantina</a>
+    <a href="telaresponsavel.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Cantina</a>
     <nav aria-label="Navegação principal">
         <a href="telaresponsavel.html">Início</a>
         <a href="adicionarsaldo.html" aria-current="page">Adicionar saldo</a>
-        <a href="loginresponsavel.html" class="sair-gestao">Sair</a>
+        <a href="loginresponsavel.html" class="sair-gestao" data-logout>Sair</a>
     </nav>
 </header>
 <main class="conteudo-gestao">
     <span class="eyebrow">ÁREA DO RESPONSÁVEL</span><h1>Adicionar saldo</h1><p class="subtitulo">Escolha um valor e confira os dados antes de confirmar a recarga.</p>
-    <p class="demo-nota"><strong>Ambiente de demonstração.</strong> Dados fictícios e operações de teste, salvos neste navegador. Nenhum valor real é cobrado.</p>
+    <p class="demo-nota"><strong>Integração em andamento.</strong> A recarga será habilitada quando os alunos vinculados forem carregados do banco.</p>
     <p id="mensagemRecarga" role="status" aria-live="polite" hidden></p>
     <div class="colunas-recarga">
         <section class="painel">
             <h2>Quanto deseja adicionar?</h2>
-            <div class="aluno-resumo"><span class="avatar" aria-hidden="true">CS</span><div><strong>Carlos Silva</strong><p>Matrícula 2026001 • Aluno de demonstração</p></div></div>
+            <div class="aluno-resumo"><span class="avatar" aria-hidden="true">—</span><div><strong>Aluno não selecionado</strong><p>Volte quando a integração dos alunos estiver concluída.</p></div></div>
             <form id="formRecarga">
                 <span class="rotulo" id="rotuloSugestoes">Valores sugeridos</span>
                 <div class="valores" role="group" aria-labelledby="rotuloSugestoes"><button type="button" data-valor="20" aria-pressed="false">R$ 20</button><button type="button" data-valor="50" aria-pressed="false">R$ 50</button><button type="button" data-valor="100" aria-pressed="false">R$ 100</button></div>
@@ -52,5 +52,7 @@
     <div class="acoes-gestao"><button type="button" id="cancelarRecarga" class="btn secundario">Voltar</button><button type="button" id="confirmarRecarga" class="btn">Confirmar recarga de teste</button></div>
 </dialog>
 <noscript>Ative o JavaScript para simular uma recarga.</noscript>
+<script src="../static/js/navegacao-perfil.js"></script>
+<script src="../static/js/logout.js"></script>
 </body>
 </html>

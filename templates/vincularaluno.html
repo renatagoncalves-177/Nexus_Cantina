@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vincular aluno - Nexus Cantina</title>
+    <link rel="stylesheet" href="../static/css/gestao.css">
+    <script src="../static/js/api-admin.js" defer></script>
+    <script src="../static/js/vincularaluno.js" defer></script>
+</head>
+<body data-perfis="admin">
+<header class="cabecalho-gestao">
+    <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Nexus Cantina</a>
+    <nav aria-label="Navegação principal">
+        <a href="telaadmin.html">Painel</a>
+        <a href="gerenciaralunos.html">Alunos</a>
+        <a href="vincularaluno.html" aria-current="page">Vínculos</a>
+        <a href="loginadmin.html" class="sair-gestao" data-logout>Sair</a>
+    </nav>
+</header>
+<main class="conteudo-gestao">
+    <div class="topo-gestao"><div><span class="eyebrow">RESPONSÁVEIS</span><h1>Vincular aluno</h1><p class="subtitulo">Defina quais alunos cada responsável poderá consultar e recarregar.</p></div></div>
+    <p class="demo-nota"><strong>Preparada para o banco.</strong> A tela consultará <code>/api/responsaveis</code>, <code>/api/alunos</code> e <code>/api/vinculos</code>. Esses endpoints ainda não foram criados.</p>
+    <section class="painel" aria-labelledby="tituloNovoVinculo">
+        <h2 id="tituloNovoVinculo">Novo vínculo</h2>
+        <form id="formVinculo" class="form-grid">
+            <div class="campo-gestao"><label for="responsavelId">Responsável</label><select id="responsavelId" name="responsavel_id" required><option value="">Aguardando responsáveis</option></select></div>
+            <div class="campo-gestao"><label for="alunoId">Aluno</label><select id="alunoId" name="aluno_id" required><option value="">Aguardando alunos</option></select></div>
+            <div class="acoes-form span-2"><button type="submit" class="btn">Criar vínculo</button></div>
+        </form>
+    </section>
+    <section class="painel" aria-labelledby="tituloVinculos">
+        <div class="painel-topo"><div><h2 id="tituloVinculos">Vínculos cadastrados</h2><p>Os dados aparecerão após a integração.</p></div><button id="atualizarVinculos" type="button" class="btn secundario pequeno">Atualizar lista</button></div>
+        <p id="mensagemVinculos" role="status" aria-live="polite" hidden></p>
+        <div class="table-wrap"><table><caption id="contagemVinculos">0 vínculo(s) cadastrado(s)</caption><thead><tr><th>Responsável</th><th>Aluno</th><th>Situação</th></tr></thead><tbody id="listaVinculos"></tbody></table></div>
+        <div class="vazio-gestao" id="vazioVinculos"><strong>Nenhum vínculo carregado.</strong><p>A lista ficará disponível quando a API for conectada.</p></div>
+    </section>
+</main>
+<script src="../static/js/navegacao-perfil.js"></script>
+<script src="../static/js/logout.js"></script>
+</body>
+</html>

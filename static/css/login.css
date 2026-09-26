@@ -1,0 +1,50 @@
+* { box-sizing: border-box; }
+
+:root {
+    --vermelho: #e52b2b;
+    --texto: #222;
+    --muted: #71717a;
+    --borda: #d4d4d8;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #f7f7f7, #ececec);
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button, input { font: inherit; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid #952222; outline-offset: 3px; }
+
+.container-login { width: min(440px, 100%); padding: 24px; }
+.card-login { padding: 38px; border: 1px solid #e5e5e5; border-radius: 18px; background: #fff; box-shadow: 0 12px 35px #0000001a; }
+.voltar-perfil { display: inline-block; margin-bottom: 24px; color: var(--vermelho); font-size: 13px; font-weight: 700; text-decoration: none; }
+.logo-area { margin-bottom: 30px; text-align: center; }
+.logo { width: 70px; height: 70px; margin: 0 auto 14px; display: grid; place-items: center; border: 2px solid #ef4444; border-radius: 50%; background: #fff2f2; color: #ef4444; font-size: 12px; font-weight: 700; }
+.logo-area h1 { margin: 0; font-size: 24px; }
+.logo-area p { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.campo { margin-bottom: 18px; }
+.campo label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 700; }
+.campo input { width: 100%; min-width: 0; height: 46px; padding: 0 14px; border: 1px solid var(--borda); border-radius: 10px; background: #fafafa; }
+.campo input:focus { border-color: var(--vermelho); background: #fff; }
+.senha-linha { display: flex; gap: 8px; }
+.senha-linha input { flex: 1; }
+.mostrar-senha { min-width: 82px; border: 1px solid var(--borda); border-radius: 10px; background: #fff; color: #444; font-size: 12px; font-weight: 700; cursor: pointer; }
+.botao-login { width: 100%; min-height: 46px; margin-top: 6px; border: 0; border-radius: 10px; background: var(--vermelho); color: #fff; font-weight: 700; cursor: pointer; }
+.botao-login:hover { background: #c92121; }
+.botao-login:disabled { opacity: .65; cursor: wait; }
+.mensagem { margin: 16px 0 0; padding: 11px 12px; border-radius: 8px; font-size: 13px; text-align: center; }
+.mensagem.erro { border: 1px solid #f5bcbc; background: #fff0f0; color: #b91c1c; }
+.mensagem.sucesso { border: 1px solid #b6e5c0; background: #eefbf1; color: #247334; }
+.rodape-login { margin-top: 24px; color: #8a8a93; font-size: 12px; text-align: center; }
+
+@media (max-width: 480px) {
+    .container-login { padding: 18px; }
+    .card-login { padding: 30px 24px; }
+    .logo-area h1 { font-size: 21px; }
+}

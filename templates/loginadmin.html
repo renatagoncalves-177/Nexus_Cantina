@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login da cantina - Nexus Cantina</title>
     <link rel="stylesheet" href="../static/css/gestao.css">
-    <script src="../static/js/gestao-dados.js" defer></script>
-    <script src="../static/js/loginadmin.js" defer></script>
+    <script src="../static/js/login.js" defer></script>
 </head>
 <body>
 <main class="login-gestao">
@@ -16,25 +15,31 @@
         <h2>Seu atendimento,<br>mais organizado.</h2>
         <p>Acompanhe os pedidos de cada intervalo e consulte as pendências dos alunos em um só lugar.</p>
     </section>
-    <section class="login-form-area">
+    <section class="login-form-area" aria-labelledby="tituloLogin">
         <div class="login-card">
             <a href="escolhausuario.html" class="texto-link">← Escolher outro perfil</a>
-            <h1>Entrar na cantina</h1>
-            <p class="subtitulo">Acesse o painel de demonstração.</p>
-            <form id="formAdmin">
-                <div class="campo-gestao"><label for="emailAdmin">E-mail</label><input id="emailAdmin" type="email" autocomplete="username" placeholder="seu@email.com" required maxlength="160"></div>
-                <div class="campo-gestao"><label for="senhaAdmin">Senha</label>
-                    <div class="senha-linha"><input id="senhaAdmin" type="password" autocomplete="current-password" required maxlength="128">
-                    <button id="mostrarSenha" type="button" class="btn secundario" aria-controls="senhaAdmin" aria-pressed="false">Mostrar</button></div>
+            <h1 id="tituloLogin">Entrar na cantina</h1>
+            <p class="subtitulo">Use sua conta administrativa.</p>
+            <form id="formLogin" data-tipo="admin" data-destino="telaadmin.html">
+                <div class="campo-gestao">
+                    <label for="identificador">E-mail</label>
+                    <input id="identificador" name="email" type="email" autocomplete="username"
+                        placeholder="seu@email.com" required maxlength="160" data-alerta-email>
                 </div>
-                <button type="submit" class="btn largo">Entrar</button>
+                <div class="campo-gestao">
+                    <label for="senha">Senha</label>
+                    <div class="senha-linha">
+                        <input id="senha" name="senha" type="password" autocomplete="current-password" required maxlength="128">
+                        <button type="button" class="btn secundario" data-mostrar-senha aria-controls="senha" aria-pressed="false">Mostrar</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn largo" data-botao-login>Entrar</button>
             </form>
-            <p id="mensagemAdmin" role="status" aria-live="polite" hidden></p>
-            <div class="demo-nota"><strong>Acesso de demonstração</strong><br>E-mail: admin@nexus.test<br>Senha: Cantina123!<br>Esta tela ainda não usa autenticação real.</div>
+            <p id="mensagemLogin" class="mensagem-gestao" role="status" aria-live="polite" hidden></p>
             <p class="footer-gestao">Nexus Cantina • Área administrativa</p>
         </div>
     </section>
 </main>
-<noscript>Ative o JavaScript para acessar a demonstração.</noscript>
+<noscript>Ative o JavaScript para acessar esta página.</noscript>
 </body>
 </html>

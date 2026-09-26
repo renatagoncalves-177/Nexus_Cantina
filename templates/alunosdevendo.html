@@ -8,23 +8,23 @@
     <script src="../static/js/gestao-dados.js" defer></script>
     <script src="../static/js/alunosdevendo.js" defer></script>
 </head>
-<body>
+<body data-perfis="admin">
 <div data-area-admin hidden>
 <header class="cabecalho-gestao">
     <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Nexus Cantina</a>
     <nav aria-label="Navegação principal">
         <a href="telaadmin.html">Painel</a>
         <a href="alunosdevendo.html" aria-current="page">Alunos e pendências</a>
-        <a href="loginadmin.html" class="sair-gestao" data-sair-admin>Sair</a>
+        <a href="loginadmin.html" class="sair-gestao" data-logout>Sair</a>
     </nav>
 </header>
 <main class="conteudo-gestao">
     <span class="eyebrow">ÁREA DA CANTINA</span><h1>Alunos e pendências</h1><p class="subtitulo">Encontre um aluno e acompanhe os valores em aberto.</p>
-    <p class="demo-nota"><strong>Ambiente de demonstração.</strong> Dados fictícios e operações de teste, salvos neste navegador. Nenhum valor real é cobrado.</p>
+    <p class="demo-nota"><strong>Integração em andamento.</strong> Os alunos e as pendências serão carregados do banco em uma próxima etapa.</p>
     <div class="metricas" aria-label="Resumo das pendências">
         <article class="metrica destaque"><span>Total em aberto</span><strong id="totalEmAberto">R$ 0,00</strong></article>
         <article class="metrica"><span>Alunos com pendência</span><strong id="quantidadeDevedores">0</strong></article>
-        <article class="metrica"><span>Alunos cadastrados na demonstração</span><strong id="quantidadeAlunos">0</strong></article>
+        <article class="metrica"><span>Alunos cadastrados</span><strong id="quantidadeAlunos">0</strong></article>
     </div>
     <section class="painel">
         <h2>Consulta de alunos</h2>
@@ -37,7 +37,7 @@
         <div class="table-wrap"><table><caption id="contagemAlunos">Carregando alunos…</caption><thead><tr><th scope="col">Aluno / matrícula</th><th scope="col">Turma</th><th scope="col">Em aberto</th><th scope="col">Situação</th><th scope="col">Ação</th></tr></thead><tbody id="listaAlunos"></tbody></table></div>
         <div id="vazioAlunos" class="vazio-gestao" hidden><strong>Nenhum aluno encontrado.</strong><p>Experimente outro nome, matrícula ou situação.</p><button type="button" id="limparFiltrosAlunos" class="btn secundario pequeno">Mostrar todos</button></div>
     </section>
-    <section class="painel"><h2>Recebimentos registrados</h2><p class="ajuda">Histórico de teste deste navegador. O recebimento reduz a pendência e não adiciona saldo.</p><div id="historicoRecebimentos"></div></section>
+    <section class="painel"><h2>Recebimentos registrados</h2><p class="ajuda">O histórico será carregado do banco quando a movimentação de saldo for integrada.</p><div id="historicoRecebimentos"></div></section>
 </main>
 <dialog id="dialogRecebimento" aria-labelledby="tituloRecebimento">
     <h2 id="tituloRecebimento">Registrar recebimento</h2>
@@ -50,6 +50,8 @@
     </form>
 </dialog>
 </div>
-<noscript>Ative o JavaScript para visualizar esta demonstração.</noscript>
+<noscript>Ative o JavaScript para visualizar esta página.</noscript>
+<script src="../static/js/navegacao-perfil.js"></script>
+<script src="../static/js/logout.js"></script>
 </body>
 </html>

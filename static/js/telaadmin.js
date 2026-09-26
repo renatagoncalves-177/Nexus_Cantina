@@ -7,7 +7,7 @@
     const intervalo = document.getElementById("filtroIntervalo");
     const status = document.getElementById("filtroStatus");
     const mensagem = document.getElementById("mensagemPainel");
-    const rotulos = { pendente: "Aguardando preparo", pronto: "Pronto para retirada", entregue: "Entregue" };
+    const rotulos = { pendente: "Aguardando preparo", pronto: "Pronto para retirada", concluido: "Concluído", cancelado: "Cancelado" };
     function renderizar() {
         try {
             const hoje = G.ler().pedidos.filter(p => p.data === G.hoje());
@@ -25,8 +25,8 @@
                 const situacao = document.createElement("td");
                 situacao.append(G.elemento("span", rotulos[pedido.status], "badge " + pedido.status));
                 const acao = document.createElement("td");
-                if (pedido.status !== "entregue") {
-                    const botao = G.elemento("button", pedido.status === "pendente" ? "Marcar pronto" : "Marcar entregue", "btn pequeno secundario");
+                if (["pendente", "pronto"].includes(pedido.status)) {
+                    const botao = G.elemento("button", pedido.status === "pendente" ? "Marcar pronto" : "Marcar concluído", "btn pequeno secundario");
                     botao.type = "button";
                     botao.setAttribute("aria-label", botao.textContent + ": " + pedido.id);
                     botao.addEventListener("click", () => {
@@ -38,7 +38,7 @@
                         renderizar();
                     });
                     acao.append(botao);
-                } else acao.append(G.elemento("span", "Concluído", "badge regular"));
+                } else acao.append(G.elemento("span", pedido.status === "cancelado" ? "Sem ação" : "Concluído", "badge " + (pedido.status === "cancelado" ? "cancelado" : "regular")));
                 tr.append(identificacao, G.elemento("td", pedido.intervalo), G.elemento("td", G.moeda(pedido.total)), situacao, acao);
                 lista.append(tr);
             }

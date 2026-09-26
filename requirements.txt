@@ -1,3 +1,8 @@
 fastapi
 jinja2
 uvicorn[standard]
+sqlalchemy>=2.0,<3.0
+pymysql>=1.1,<2.0
+pwdlib[argon2]>=0.2,<1.0
+itsdangerous>=2.2,<3.0
+python-dotenv>=1.0,<2.0

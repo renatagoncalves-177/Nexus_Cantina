@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 
@@ -23,6 +23,38 @@ PAGINAS = {
     "alunosdevendo",
     "loginadmin",
     "adicionarsaldo",
+    "gerenciaralunos",
+    "gerenciarprodutos",
+    "detalhepedido",
+    "vincularaluno",
+}
+
+PAGINAS_PROTEGIDAS = {
+    "telaaluno": {"aluno"},
+    "pedidoaluno": {"aluno", "responsavel"},
+    "carrinho": {"aluno", "responsavel"},
+    "pagamento": {"aluno", "responsavel"},
+    "alertapagamento": {"aluno", "responsavel"},
+    "telaresponsavel": {"responsavel"},
+    "adicionarsaldo": {"responsavel"},
+    "telaadmin": {"admin"},
+    "alunosdevendo": {"admin"},
+    "gerenciaralunos": {"admin"},
+    "gerenciarprodutos": {"admin"},
+    "detalhepedido": {"admin"},
+    "vincularaluno": {"admin"},
+}
+
+DESTINOS_POR_TIPO = {
+    "aluno": "telaaluno.html",
+    "responsavel": "telaresponsavel.html",
+    "admin": "telaadmin.html",
+}
+
+LOGIN_POR_TIPO = {
+    "aluno": "loginaluno.html",
+    "responsavel": "loginresponsavel.html",
+    "admin": "loginadmin.html",
 }
 
 
@@ -40,6 +72,24 @@ async def exibir_pagina(request: Request, nome_pagina: str):
 
     if pagina_sem_extensao not in PAGINAS:
         raise HTTPException(status_code=404, detail="Página não encontrada")
+
+    tipo_usuario = request.session.get("tipo")
+    permitido = PAGINAS_PROTEGIDAS.get(pagina_sem_extensao)
+    if permitido and tipo_usuario not in permitido:
+        if tipo_usuario in DESTINOS_POR_TIPO:
+            return RedirectResponse(url=f"/{DESTINOS_POR_TIPO[tipo_usuario]}", status_code=303)
+        if len(permitido) == 1:
+            login = LOGIN_POR_TIPO[next(iter(permitido))]
+        else:
+            login = "escolhausuario.html"
+        return RedirectResponse(url=f"/{login}", status_code=303)
+
+    tipo_login = next(
+        (tipo for tipo, pagina in LOGIN_POR_TIPO.items() if pagina.removesuffix(".html") == pagina_sem_extensao),
+        None,
+    )
+    if tipo_login and tipo_usuario == tipo_login:
+        return RedirectResponse(url=f"/{DESTINOS_POR_TIPO[tipo_login]}", status_code=303)
 
     return templates.TemplateResponse(
         request=request,

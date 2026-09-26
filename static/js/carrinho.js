@@ -1,4 +1,26 @@
-let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+function lerCarrinho() {
+    try {
+        const dados = JSON.parse(localStorage.getItem("carrinho") || "[]");
+        if (!Array.isArray(dados)) return [];
+        return dados.filter(item =>
+            item && ["string", "number"].includes(typeof item.id) &&
+            typeof item.nome === "string" && Number.isFinite(Number(item.preco)) &&
+            Number(item.preco) >= 0 && Number.isInteger(Number(item.quantidade)) &&
+            Number(item.quantidade) > 0
+        ).map(item => ({
+            id: item.id,
+            nome: item.nome,
+            preco: Number(item.preco),
+            quantidade: Number(item.quantidade),
+            emoji: typeof item.emoji === "string" ? item.emoji : "🍽️"
+        }));
+    } catch (_) {
+        localStorage.removeItem("carrinho");
+        return [];
+    }
+}
+
+let carrinho = lerCarrinho();
 
 const areaCarrinho = document.getElementById("carrinho");
 const resumo = document.getElementById("resumo");
@@ -16,7 +38,8 @@ function obterChaveHoje() {
 
 function lerIntervalosConfirmados() {
     try {
-        return JSON.parse(localStorage.getItem("intervalosConfirmados")) || {};
+        const dados = JSON.parse(localStorage.getItem("intervalosConfirmados") || "{}");
+        return dados && typeof dados === "object" && !Array.isArray(dados) ? dados : {};
     } catch (_erro) {
         return {};
     }
@@ -40,18 +63,25 @@ function atualizarIntervalosDisponiveis() {
             ? `${rotuloOriginal} — pedido já feito hoje`
             : rotuloOriginal;
     });
+
+    const intervaloSalvo = localStorage.getItem("intervaloPedido");
+    const opcaoSalva = Array.from(seletorIntervalo.options).find((opcao) => opcao.value === intervaloSalvo);
+    if (opcaoSalva && !opcaoSalva.disabled) seletorIntervalo.value = intervaloSalvo;
 }
 
 function renderizar() {
-    areaCarrinho.innerHTML = "";
+    areaCarrinho.replaceChildren();
 
     if (carrinho.length === 0) {
-        areaCarrinho.innerHTML = `
-            <div class="vazio">
-                <p>Seu carrinho está vazio.</p>
-                <a href="pedidoaluno.html">Ver produtos</a>
-            </div>
-        `;
+        const vazio = document.createElement("div");
+        vazio.className = "vazio";
+        const texto = document.createElement("p");
+        texto.textContent = "Seu carrinho está vazio.";
+        const link = document.createElement("a");
+        link.href = "pedidoaluno.html";
+        link.textContent = "Ver produtos";
+        vazio.append(texto, link);
+        areaCarrinho.append(vazio);
 
         resumo.style.display = "none";
         return;
@@ -62,20 +92,35 @@ function renderizar() {
     carrinho.forEach((item) => {
         const elemento = document.createElement("div");
         elemento.className = "item";
-        elemento.innerHTML = `
-            <div class="info">
-                <div class="emoji">${item.emoji}</div>
-                <div>
-                    <h3>${item.nome}</h3>
-                    <p>R$ ${item.preco.toFixed(2).replace(".", ",")}</p>
-                </div>
-            </div>
-            <div class="quantidade">
-                <button onclick="alterarQuantidade(${item.id}, -1)">−</button>
-                <strong>${item.quantidade}</strong>
-                <button onclick="alterarQuantidade(${item.id}, 1)">+</button>
-            </div>
-        `;
+        const info = document.createElement("div");
+        info.className = "info";
+        const emoji = document.createElement("div");
+        emoji.className = "emoji";
+        emoji.textContent = item.emoji;
+        const descricao = document.createElement("div");
+        const nome = document.createElement("h3");
+        nome.textContent = item.nome;
+        const preco = document.createElement("p");
+        preco.textContent = `R$ ${item.preco.toFixed(2).replace(".", ",")}`;
+        descricao.append(nome, preco);
+        info.append(emoji, descricao);
+
+        const quantidade = document.createElement("div");
+        quantidade.className = "quantidade";
+        const diminuir = document.createElement("button");
+        diminuir.type = "button";
+        diminuir.textContent = "−";
+        diminuir.setAttribute("aria-label", `Diminuir quantidade de ${item.nome}`);
+        diminuir.addEventListener("click", () => alterarQuantidade(item.id, -1));
+        const totalItem = document.createElement("strong");
+        totalItem.textContent = String(item.quantidade);
+        const aumentar = document.createElement("button");
+        aumentar.type = "button";
+        aumentar.textContent = "+";
+        aumentar.setAttribute("aria-label", `Aumentar quantidade de ${item.nome}`);
+        aumentar.addEventListener("click", () => alterarQuantidade(item.id, 1));
+        quantidade.append(diminuir, totalItem, aumentar);
+        elemento.append(info, quantidade);
 
         areaCarrinho.appendChild(elemento);
     });
@@ -132,3 +177,4 @@ function continuarPagamento() {
 
 atualizarIntervalosDisponiveis();
 renderizar();
+document.getElementById("continuarPagamento").addEventListener("click", continuarPagamento);

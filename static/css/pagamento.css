@@ -48,6 +48,7 @@ header {
 nav {
     display: flex;
     gap: 30px;
+    flex-wrap: wrap;
 }
 
 nav a {
@@ -56,6 +57,8 @@ nav a {
     font-weight: 600;
     text-decoration: none;
 }
+
+nav a[aria-current="page"] { color: #ef4444; }
 
 main {
     width: min(1050px, calc(100% - 40px));
@@ -192,6 +195,11 @@ main {
     color: #b91c1c;
 }
 
+.aviso.limite {
+    background: #fff7ed;
+    color: #9a3412;
+}
+
 button,
 .voltar-carrinho {
     width: 100%;
@@ -287,6 +295,9 @@ button,
 @media (max-width: 760px) {
     header {
         padding: 12px 20px;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
     }
 
     nav {

@@ -158,3 +158,196 @@ Copie este modelo e preencha de forma simples:
   do banco, modelos e schemas não foram alterados nesta etapa.
 - Os dados de demonstração e o armazenamento no navegador são temporários.
   Eles deverão ser removidos quando o banco interno em Python for conectado.
+
+## 26 de setembro de 2026 — alteração, cancelamento e limite negativo
+
+- `templates/pagamento.html`, `static/js/pagamento.js` e
+  `static/css/pagamento.css`: a IA incluiu o saldo antes e depois do pedido,
+  permitiu saldo negativo até R$ 250,00 e adicionou os avisos do limite.
+- `templates/alertapagamento.html`, `static/js/alertapagamento.js` e
+  `static/css/alertapagamento.css`: a IA adicionou as opções para alterar ou
+  cancelar um pedido ainda não concluído. Essas ações devolvem o saldo; a
+  alteração devolve os itens ao carrinho e ambas liberam o intervalo.
+- `static/js/carrinho.js`: a IA manteve selecionado o intervalo do pedido
+  quando o aluno volta ao carrinho para alterá-lo.
+- `templates/telaadmin.html`, `static/js/telaadmin.js` e
+  `static/css/gestao.css`: a IA trocou o estado final para **Concluído** e
+  adicionou a exibição de pedidos cancelados. Somente pedidos ainda não
+  concluídos podem ser alterados ou cancelados pelo aluno.
+- `static/js/gestao-dados.js`: a IA registrou débito e estorno do pedido,
+  aplicou o limite negativo e sincronizou o estado final com o último pedido
+  deste navegador. Nenhum novo aluno ou pedido fictício foi acrescentado.
+- `README.md`: a IA documentou as duas regras. Elas ainda usam o armazenamento
+  local da demonstração e deverão ser validadas novamente no backend quando o
+  banco em Python for conectado.
+
+## 26 de setembro de 2026 — primeira integração do login com o banco
+
+- `database/database.py`, `.env.example`, `requirements.txt` e `main.py`: a
+  IA corrigiu a conexão, adicionou as dependências do MySQL, carregamento das
+  variáveis de ambiente e sessão assinada em cookie `HttpOnly`.
+- `database/schema.sql`: a IA reorganizou o SQL com uma tabela única de
+  usuários, senha em hash, perfis, vínculos entre responsável e estudante,
+  produtos, pedidos, itens e movimentações de saldo. Também incluiu o limite
+  de saldo negativo de R$ 250,00 e removeu os triggers conflitantes.
+- `models/usuario.py`, `schemas/auth.py`, `services/auth.py` e
+  `routers/auth.py`: a IA criou o modelo, a validação, a conferência de senha
+  com Argon2 e as rotas de login, sessão atual e logout. O antigo
+  `schemas/usuario.py` foi removido porque ficou sem uso.
+- `scripts/criar_usuario.py`: a IA adicionou um comando interativo para criar
+  alunos, responsáveis ou administradores sem salvar a senha original.
+- `routers/paginas.py`: a IA protegeu as páginas internas conforme o perfil
+  autenticado.
+- `templates/loginaluno.html`, `templates/loginresponsavel.html`,
+  `templates/loginadmin.html`, `static/css/login.css` e `static/js/login.js`:
+  a IA padronizou os formulários, nomes, validação, acessibilidade, estado de
+  carregamento e mensagens. Os arquivos duplicados de CSS e JavaScript dos
+  logins de aluno e responsável foram removidos.
+- `static/js/login.js`: ao confirmar um e-mail válido de responsável ou
+  administrador, a IA adicionou o alerta solicitado. A mensagem informa que
+  o envio é apenas uma simulação; nenhum e-mail real é enviado.
+- `static/js/logout.js`, `static/js/usuario-atual.js` e as páginas internas:
+  a IA conectou o logout, exibiu o nome da sessão e retirou nomes, saldos,
+  pedidos e credenciais fictícias. As áreas ainda não ligadas ao banco agora
+  mostram estados vazios ou avisos de integração pendente.
+- `static/js/gestao-dados.js`, `static/js/pagamento.js`,
+  `static/js/alertapagamento.js`, `static/js/adicionarsaldo.js` e
+  `static/js/saldo-demo.js`: a IA removeu os alunos e pedidos fictícios e o
+  identificador fixo usado no saldo. `saldo-demo.js` foi removido. A
+  confirmação de pedidos e a recarga ficam desabilitadas até suas APIs serem
+  conectadas ao banco.
+- `static/js/pedidoaluno.js` e `static/css/pedidoaluno.css`: a IA corrigiu o
+  erro da variável `produtos` inexistente e adicionou um estado vazio para o
+  cardápio ainda não integrado.
+- `static/css/telaresponsavel.css`: a IA corrigiu a rolagem horizontal e a
+  organização do cabeçalho no celular.
+- `README.md` e `documentacao-ia/REGISTRO_IA.md`: a IA documentou a instalação,
+  a criação do primeiro usuário e os limites desta primeira etapa.
+- A autenticação foi testada com um banco SQLite temporário, sem adicionar
+  usuários ao projeto. Passaram os três perfis, hash Argon2, cookie de sessão,
+  logout, proteção de páginas, mensagens de erro, alertas simulados e layouts
+  de desktop e celular.
+
+## 26 de setembro de 2026 — telas preparadas para as próximas APIs
+
+- `templates/gerenciaralunos.html` e `static/js/gerenciaralunos.js`: a IA
+  adicionou o cadastro e a listagem de alunos preparados para `GET` e `POST`
+  em `/api/alunos`, sem inserir registros fictícios.
+- `templates/gerenciarprodutos.html` e `static/js/gerenciarprodutos.js`: a IA
+  adicionou o cadastro e a listagem de produtos preparados para
+  `/api/produtos`, incluindo preço, estoque e disponibilidade.
+- `templates/vincularaluno.html` e `static/js/vincularaluno.js`: a IA criou a
+  tela de vínculos preparada para alunos, responsáveis e `/api/vinculos`.
+- `templates/detalhepedido.html` e `static/js/detalhepedido.js`: a IA criou a
+  consulta de um pedido e a atualização de sua situação, preparadas para
+  `/api/pedidos/{id}`.
+- `static/js/api-admin.js`: a IA isolou as requisições dessas quatro telas e
+  tratou endpoints ainda ausentes como integração pendente.
+- `templates/telaadmin.html` e `static/css/gestao.css`: a IA adicionou os
+  acessos para as novas telas e estilos responsivos compartilhados.
+- `routers/paginas.py`: a IA registrou as quatro páginas e restringiu o acesso
+  ao perfil administrador.
+- `scripts/criar_usuarios_teste.py` e `.env.example`: a IA adicionou um comando
+  explícito e idempotente para criar um aluno, um responsável e um
+  administrador de teste somente no banco configurado. Nada é criado
+  automaticamente e a senha pode ser definida pelo ambiente.
+- `README.md`: a IA documentou as telas dependentes do banco, os endpoints
+  planejados, o ambiente virtual e as contas de teste.
+- `.venv/`: a IA criou o ambiente virtual local e instalou somente as
+  dependências declaradas em `requirements.txt`. A pasta permanece ignorada
+  pelo Git.
+- Nenhum endpoint de alunos, produtos, vínculos ou pedidos foi implementado e
+  nenhuma tabela ou lógica de negócio do banco foi alterada nesta etapa.
+
+## 26 de setembro de 2026 — acesso local antes do banco
+
+- `services/usuarios_teste.py`: a IA adicionou três contas locais controladas
+  por `ENABLE_TEST_USERS`, sem salvar usuários no navegador ou criar um banco.
+- `database/database.py` e `routers/auth.py`: a IA permitiu que login, sessão
+  atual e páginas protegidas funcionem no modo de teste quando o banco ainda
+  não estiver configurado. A autenticação pelo banco continua sendo usada
+  normalmente quando esse modo não corresponde ao acesso informado.
+- `.env`: a IA habilitou o modo apenas neste computador. O arquivo continua
+  ignorado pelo Git.
+- `.env.example`: a IA documentou a chave de ativação, desabilitada por padrão
+  para novos ambientes.
+- `scripts/criar_usuarios_teste.py`: a IA alinhou a futura carga no banco com
+  as mesmas contas locais: `aluno01`, `resp01@teste.com` e
+  `admin01@teste.com`, todas com a senha temporária `1234`.
+- `templates/loginaluno.html`: a IA retirou o teclado exclusivamente numérico,
+  pois a matrícula de teste também contém letras.
+- `static/js/login.js`: a IA incluiu uma orientação clara quando alguém tenta
+  autenticar pelo Live Server em vez do FastAPI.
+- `README.md`: a IA registrou os acessos, a porta correta e como desabilitar o
+  modo de teste quando o banco estiver pronto.
+- Os três perfis foram testados por HTTP: login, cookie de sessão, rota
+  `/api/auth/me` e abertura das respectivas páginas protegidas retornaram com
+  sucesso. Nenhuma conta foi gravada em um banco real.
+
+## 26 de setembro de 2026 — correção do acesso aberto como arquivo
+
+- `static/js/login.js`: após a equipe identificar o erro `Failed to fetch`, a
+  IA confirmou que o HTML estava aberto por `file:///`. As três telas de login
+  agora redirecionam automaticamente para a mesma página em
+  `http://127.0.0.1:8000`, onde o backend e a sessão estão disponíveis.
+- `static/js/login.js`: a IA também substituiu a mensagem técnica de falha de
+  rede por uma orientação para iniciar o FastAPI na porta 8000.
+- Nenhuma credencial, regra de negócio ou estrutura do banco foi alterada
+  nesta correção.
+
+## 26 de setembro de 2026 — revisão de navegação e estabilidade
+
+- `routers/paginas.py`: a IA corrigiu o redirecionamento de uma página de
+  outro perfil. Um usuário já autenticado agora volta para sua própria área,
+  em vez de cair no formulário de login do perfil incorreto.
+- `static/js/navegacao-perfil.js`: a IA adicionou navegação consciente da
+  sessão. Início e saída apontam para aluno, responsável ou administrador
+  conforme o perfil atual. Abas antigas também são encaminhadas ao trocar de
+  perfil em outra aba.
+- `templates/pedidoaluno.html`, `templates/carrinho.html`,
+  `templates/pagamento.html` e `templates/alertapagamento.html`: a IA marcou
+  as páginas compartilhadas, corrigiu o destino de início e adicionou os
+  scripts de navegação. O logout que faltava no cardápio também foi ligado.
+- `templates/telaaluno.html`, `templates/telaresponsavel.html`,
+  `templates/telaadmin.html`, `templates/alunosdevendo.html`,
+  `templates/adicionarsaldo.html`, `templates/gerenciaralunos.html`,
+  `templates/gerenciarprodutos.html`, `templates/vincularaluno.html` e
+  `templates/detalhepedido.html`: a IA declarou os perfis permitidos no HTML
+  e ativou a verificação de abas antigas.
+- `static/js/logout.js`: a IA passou a consultar a sessão antes de sair, para
+  sempre retornar ao login do perfil correto.
+- `templates/carrinho.html` e `static/js/carrinho.js`: a IA substituiu o link
+  com `href="#"` por um botão real, removeu eventos inline, tratou dados
+  locais ausentes ou inválidos e passou a criar os itens com a API do DOM.
+- `static/js/pagamento.js`, `static/js/alertapagamento.js` e
+  `static/js/pedidoaluno.js`: a IA adicionou leitura segura do armazenamento,
+  validação dos dados e criação de conteúdo sem interpolar valores do
+  navegador em HTML.
+- `static/js/usuario-atual.js`: a IA passou a atualizar o nome ao restaurar ou
+  focar uma aba, evitando dados visuais de uma sessão anterior.
+- `static/css/pedidoaluno.css`, `static/css/carrinho.css` e
+  `static/css/pagamento.css`: a IA corrigiu cabeçalhos estreitos, quebra da
+  navegação em telas pequenas e indicação da seção atual.
+- `README.md`: a IA documentou que existe uma sessão por navegador e como a
+  navegação se comporta ao trocar de perfil.
+- A revisão verificou as 17 páginas Jinja, todos os arquivos Python e os 17
+  arquivos JavaScript, referências locais, IDs duplicados, IDs usados pelos
+  scripts, permissões, logins e redirecionamentos por perfil. Nenhum endpoint
+  de negócio ou banco de dados foi adicionado nesta correção.
+
+## 26 de setembro de 2026 — consolidação antes do commit
+
+- A IA confirmou que a falha mais recente de login ocorreu porque o FastAPI
+  local estava parado. O servidor foi reiniciado em `127.0.0.1:8000` e o
+  acesso `aluno01` com senha `1234` voltou a abrir `telaaluno.html` com status
+  HTTP 200.
+- Os acessos de aluno, responsável e administrador foram novamente verificados
+  pelo backend, incluindo suas páginas iniciais e o redirecionamento para a
+  área correta quando uma rota pertence a outro perfil.
+- A inspeção visual que seria feita no navegador foi interrompida a pedido da
+  equipe; ela não produziu alterações adicionais no projeto.
+- `.env` e `.venv/` permanecem apenas no computador local e ignorados pelo
+  Git. `.env.example` registra as opções necessárias sem incluir a chave local
+  de sessão.
+- Todo o restante do progresso descrito neste registro foi preparado para um
+  único commit de consolidação, sem adicionar o banco de dados de negócio.

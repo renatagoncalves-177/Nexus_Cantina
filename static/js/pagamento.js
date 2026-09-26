@@ -1,4 +1,18 @@
-const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+function lerCarrinhoPagamento() {
+    try {
+        const dados = JSON.parse(localStorage.getItem("carrinho") || "[]");
+        if (!Array.isArray(dados)) return [];
+        return dados.filter(item => item && typeof item.nome === "string" &&
+            Number.isFinite(Number(item.preco)) && Number(item.preco) >= 0 &&
+            Number.isInteger(Number(item.quantidade)) && Number(item.quantidade) > 0
+        ).map(item => ({ ...item, preco: Number(item.preco), quantidade: Number(item.quantidade) }));
+    } catch (_) {
+        localStorage.removeItem("carrinho");
+        return [];
+    }
+}
+
+const carrinho = lerCarrinhoPagamento();
 const intervalo = localStorage.getItem("intervaloPedido") || "";
 
 const listaPedido = document.getElementById("listaPedido");
@@ -9,6 +23,10 @@ const abrirConfirmacao = document.getElementById("abrirConfirmacao");
 const modal = document.getElementById("modalConfirmacao");
 const cancelarConfirmacao = document.getElementById("cancelarConfirmacao");
 const confirmarCompra = document.getElementById("confirmarCompra");
+const saldoAntesElemento = document.getElementById("saldoAntesPedido");
+const saldoDepoisElemento = document.getElementById("saldoDepoisPedido");
+const G = window.NexusGestao;
+const ALUNO_ID = null;
 
 function obterChaveHoje() {
     const hoje = new Date();
@@ -21,7 +39,8 @@ function obterChaveHoje() {
 
 function lerIntervalosConfirmados() {
     try {
-        return JSON.parse(localStorage.getItem("intervalosConfirmados")) || {};
+        const dados = JSON.parse(localStorage.getItem("intervalosConfirmados") || "{}");
+        return dados && typeof dados === "object" && !Array.isArray(dados) ? dados : {};
     } catch (_erro) {
         return {};
     }
@@ -53,18 +72,56 @@ function bloquearConfirmacao(mensagem) {
     abrirConfirmacao.disabled = true;
 }
 
+function obterAluno() {
+    return G.ler().alunos.find((aluno) => aluno.id === ALUNO_ID);
+}
+
+function atualizarSaldo() {
+    if (!ALUNO_ID) {
+        saldoAntesElemento.textContent = "—";
+        saldoDepoisElemento.textContent = "—";
+        bloquearConfirmacao("A confirmação de pedidos será habilitada quando saldo e pedidos forem conectados ao banco.");
+        return;
+    }
+    const aluno = obterAluno();
+    if (!aluno) {
+        throw new Error("Aluno não encontrado.");
+    }
+    const saldoDepois = aluno.saldo - Math.round(calcularTotal() * 100);
+    saldoAntesElemento.textContent = G.moeda(aluno.saldo);
+    saldoDepoisElemento.textContent = G.moeda(saldoDepois);
+
+    if (saldoDepois < G.LIMITE_NEGATIVO) {
+        bloquearConfirmacao("Este pedido ultrapassa o limite de saldo negativo de R$ 250,00.");
+        return;
+    }
+    if (saldoDepois === G.LIMITE_NEGATIVO) {
+        aviso.textContent = "Atenção: este pedido fará o saldo chegar ao limite negativo de R$ 250,00.";
+        aviso.className = "aviso visivel limite";
+    } else if (saldoDepois < 0) {
+        aviso.textContent = `Atenção: após este pedido, o saldo ficará em ${G.moeda(saldoDepois)}. O limite é -R$ 250,00.`;
+        aviso.className = "aviso visivel limite";
+    }
+}
+
 function renderizarPedido() {
+    abrirConfirmacao.disabled = false;
+    aviso.textContent = "";
+    aviso.className = "aviso";
     intervaloElemento.textContent = intervalo || "Não informado";
     totalElemento.textContent = formatarMoeda(calcularTotal());
-    listaPedido.innerHTML = "";
+    listaPedido.replaceChildren();
 
     if (carrinho.length === 0) {
-        listaPedido.innerHTML = `
-            <div class="estado-vazio">
-                <p>Seu carrinho está vazio.</p>
-                <a href="pedidoaluno.html">Escolher produtos</a>
-            </div>
-        `;
+        const estado = document.createElement("div");
+        estado.className = "estado-vazio";
+        const texto = document.createElement("p");
+        texto.textContent = "Seu carrinho está vazio.";
+        const link = document.createElement("a");
+        link.href = "pedidoaluno.html";
+        link.textContent = "Escolher produtos";
+        estado.append(texto, link);
+        listaPedido.append(estado);
         bloquearConfirmacao("Adicione pelo menos um produto antes de confirmar.");
         return;
     }
@@ -72,16 +129,21 @@ function renderizarPedido() {
     carrinho.forEach((item) => {
         const elemento = document.createElement("article");
         elemento.className = "item-pedido";
-        elemento.innerHTML = `
-            <div class="item-identificacao">
-                <span class="item-emoji">${item.emoji || "🍽️"}</span>
-                <div>
-                    <h3>${item.nome}</h3>
-                    <p>Quantidade: ${item.quantidade}</p>
-                </div>
-            </div>
-            <strong>${formatarMoeda(Number(item.preco) * Number(item.quantidade))}</strong>
-        `;
+        const identificacao = document.createElement("div");
+        identificacao.className = "item-identificacao";
+        const emoji = document.createElement("span");
+        emoji.className = "item-emoji";
+        emoji.textContent = typeof item.emoji === "string" ? item.emoji : "🍽️";
+        const descricao = document.createElement("div");
+        const nome = document.createElement("h3");
+        nome.textContent = item.nome;
+        const quantidade = document.createElement("p");
+        quantidade.textContent = `Quantidade: ${item.quantidade}`;
+        descricao.append(nome, quantidade);
+        identificacao.append(emoji, descricao);
+        const subtotal = document.createElement("strong");
+        subtotal.textContent = formatarMoeda(item.preco * item.quantidade);
+        elemento.append(identificacao, subtotal);
         listaPedido.appendChild(elemento);
     });
 
@@ -95,7 +157,11 @@ function renderizarPedido() {
             `Você já fez um pedido para ${intervalo.toLowerCase()} hoje. ` +
             "Tente novamente amanhã ou escolha o outro intervalo."
         );
+        return;
     }
+
+    try { atualizarSaldo(); }
+    catch (erro) { bloquearConfirmacao(erro.message); }
 }
 
 function exibirModal() {
@@ -115,11 +181,28 @@ function fecharModal() {
 }
 
 function registrarPedido() {
+    if (!ALUNO_ID) {
+        fecharModal();
+        bloquearConfirmacao("A confirmação de pedidos ainda não está conectada ao banco.");
+        return;
+    }
     if (intervaloJaUsadoHoje()) {
         fecharModal();
         bloquearConfirmacao(
             "Este intervalo acabou de ser utilizado. Escolha outro ou tente amanhã."
         );
+        return;
+    }
+
+    const pedidoId = Date.now();
+    const total = calcularTotal();
+    let saldoAposPedido;
+    try {
+        const dados = G.debitarPedido(ALUNO_ID, pedidoId, Math.round(total * 100));
+        saldoAposPedido = dados.alunos.find((aluno) => aluno.id === ALUNO_ID).saldo;
+    } catch (erro) {
+        fecharModal();
+        bloquearConfirmacao(erro.message);
         return;
     }
 
@@ -132,11 +215,15 @@ function registrarPedido() {
     localStorage.setItem("intervalosConfirmados", JSON.stringify(registros));
 
     const pedido = {
-        id: Date.now(),
+        id: pedidoId,
+        alunoId: ALUNO_ID,
         data: chaveHoje,
         intervalo,
-        total: calcularTotal(),
+        total,
+        totalCentavos: Math.round(total * 100),
         itens: carrinho,
+        status: "pendente",
+        saldoAposPedido,
         confirmadoEm: new Date().toISOString()
     };
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar produtos - Nexus Cantina</title>
+    <link rel="stylesheet" href="../static/css/gestao.css">
+    <script src="../static/js/api-admin.js" defer></script>
+    <script src="../static/js/gerenciarprodutos.js" defer></script>
+</head>
+<body data-perfis="admin">
+<header class="cabecalho-gestao">
+    <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Nexus Cantina</a>
+    <nav aria-label="Navegação principal">
+        <a href="telaadmin.html">Painel</a>
+        <a href="gerenciaralunos.html">Alunos</a>
+        <a href="gerenciarprodutos.html" aria-current="page">Produtos</a>
+        <a href="loginadmin.html" class="sair-gestao" data-logout>Sair</a>
+    </nav>
+</header>
+<main class="conteudo-gestao">
+    <div class="topo-gestao"><div><span class="eyebrow">CARDÁPIO E ESTOQUE</span><h1>Gerenciar produtos</h1><p class="subtitulo">Cadastre os itens que serão exibidos no cardápio e acompanhe sua disponibilidade.</p></div></div>
+    <p class="demo-nota"><strong>Preparada para o banco.</strong> Esta tela usará <code>GET /api/produtos</code> e <code>POST /api/produtos</code>. Os endpoints ainda não foram criados.</p>
+    <section class="painel" aria-labelledby="tituloCadastroProduto">
+        <h2 id="tituloCadastroProduto">Novo produto</h2>
+        <form id="formProduto" class="form-grid">
+            <div class="campo-gestao"><label for="nomeProduto">Nome</label><input id="nomeProduto" name="nome" required></div>
+            <div class="campo-gestao"><label for="precoProduto">Preço</label><input type="number" id="precoProduto" name="preco" min="0.01" step="0.01" inputmode="decimal" required></div>
+            <div class="campo-gestao span-2"><label for="descricaoProduto">Descrição</label><textarea id="descricaoProduto" name="descricao" rows="3"></textarea></div>
+            <div class="campo-gestao"><label for="estoqueProduto">Quantidade em estoque</label><input type="number" id="estoqueProduto" name="estoque" min="0" step="1" required></div>
+            <label class="campo-check"><input type="checkbox" id="ativoProduto" name="ativo" checked> Produto disponível no cardápio</label>
+            <div class="acoes-form span-2"><button type="submit" class="btn">Cadastrar produto</button></div>
+        </form>
+    </section>
+    <section class="painel" aria-labelledby="tituloListaProdutos">
+        <div class="painel-topo"><div><h2 id="tituloListaProdutos">Produtos cadastrados</h2><p>Os dados aparecerão após a integração.</p></div><button id="atualizarProdutos" type="button" class="btn secundario pequeno">Atualizar lista</button></div>
+        <p id="mensagemProdutos" role="status" aria-live="polite" hidden></p>
+        <div class="table-wrap"><table><caption id="contagemProdutos">0 produto(s) cadastrado(s)</caption><thead><tr><th>Produto</th><th>Preço</th><th>Estoque</th><th>Situação</th></tr></thead><tbody id="listaProdutos"></tbody></table></div>
+        <div class="vazio-gestao" id="vazioProdutos"><strong>Nenhum produto carregado.</strong><p>A lista ficará disponível quando a API for conectada.</p></div>
+    </section>
+</main>
+<script src="../static/js/navegacao-perfil.js"></script>
+<script src="../static/js/logout.js"></script>
+</body>
+</html>

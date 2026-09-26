@@ -8,58 +8,55 @@
 
 </head>
 
-<body>
+<body data-perfis="responsavel">
     <header>
         <div class="marca">
             <div class="logo">CANTINA</div>
-            <h2>Cantina</h2>
+            <h2>Nexus Cantina</h2>
         </div>
 
         <nav>
             <a href="telaresponsavel.html">Início</a>
             <a href="pedidoaluno.html">Produtos</a>
             <a href="carrinho.html">Carrinho</a>
-            <a href="loginresponsavel.html" class="sair">Sair</a>
+            <a href="loginresponsavel.html" class="sair" data-logout>Sair</a>
         </nav>
     </header>
 
     <main>
         <section class="boas-vindas">
             <p>Área do Responsável</p>
-            <h1>Bem-vindo(a) à área do responsável!</h1>
+            <h1>Bem-vindo(a), <span data-nome-usuario>responsável</span>!</h1>
         </section>
 
         <section class="responsavel">
             <p>Aqui você pode gerenciar as informações e atividades relacionadas aos alunos sob sua responsabilidade.</p>
-            <p>Aluno: Carlos Silva (demonstração)</p>
+            <p>Os alunos vinculados serão carregados na próxima etapa da integração.</p>
         </section>
 
         <section class="cards">
 
             <div class="card saldo">
-                <p>Saldo disponível (demonstração)</p>
-                <h2 id="saldoDisponivel">R$ 110,00</h2>
+                <p>Saldo disponível</p>
+                <h2 id="saldoDisponivel">—</h2>
             </div>
 
             <div class="card gasto">
                 <p>Gastos realizados</p>
-                <h2>R$ 29,00</h2>
+                <h2>—</h2>
             </div>
 
         </section>
 
         <section class="saldo">
             <div class="card">
-                <h3>Adicionar Saldo</h3>
-                <label for="valor">Valor da recarga de teste (R$)</label>
-                <form action="adicionarsaldo.html" method="get" class="formulario">
-                    <input type="text" id="valor" name="valor" placeholder="0,00" required>
-                    <button type="submit" class="botaoAdicionar">Adicionar</button>
-                </form>
+                <h3>Adicionar saldo</h3>
+                <p>A recarga será habilitada quando os alunos forem vinculados ao banco.</p>
             </div>
         </section>
 
     </main>
-    <script src="../static/js/gestao-dados.js"></script>
-    <script src="../static/js/saldo-demo.js"></script>
+    <script src="../static/js/usuario-atual.js"></script>
+    <script src="../static/js/navegacao-perfil.js"></script>
+    <script src="../static/js/logout.js"></script>
 </body></html>

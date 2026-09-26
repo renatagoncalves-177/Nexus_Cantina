@@ -8,19 +8,20 @@
     <script src="../static/js/gestao-dados.js" defer></script>
     <script src="../static/js/telaadmin.js" defer></script>
 </head>
-<body>
+<body data-perfis="admin">
 <div data-area-admin hidden>
 <header class="cabecalho-gestao">
     <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Nexus Cantina</a>
     <nav aria-label="Navegação principal">
         <a href="telaadmin.html" aria-current="page">Painel</a>
-        <a href="alunosdevendo.html">Alunos e pendências</a>
-        <a href="loginadmin.html" class="sair-gestao" data-sair-admin>Sair</a>
+        <a href="gerenciaralunos.html">Alunos</a>
+        <a href="gerenciarprodutos.html">Produtos</a>
+        <a href="loginadmin.html" class="sair-gestao" data-logout>Sair</a>
     </nav>
 </header>
 <main class="conteudo-gestao">
     <div class="topo-gestao"><div><span class="eyebrow">ÁREA DA CANTINA</span><h1>Visão geral</h1><p class="subtitulo">Organize o preparo e a entrega dos pedidos de hoje.</p></div><span class="badge" id="dataPainel"></span></div>
-    <p class="demo-nota"><strong>Ambiente de demonstração.</strong> Dados fictícios e operações de teste, salvos neste navegador. Nenhum valor real é cobrado.</p>
+    <p class="demo-nota"><strong>Integração em andamento.</strong> O login já usa o backend; pedidos e saldos serão conectados ao banco nas próximas etapas.</p>
     <div class="metricas" aria-label="Indicadores de hoje">
         <article class="metrica destaque"><span>Pedidos de hoje</span><strong id="totalPedidos">0</strong></article>
         <article class="metrica"><span>Aguardando preparo</span><strong id="totalPendentes">0</strong></article>
@@ -31,16 +32,27 @@
         <div class="filtros">
             <div class="campo-gestao"><label for="buscaPedido">Buscar pedido ou aluno</label><input type="search" id="buscaPedido" placeholder="Nome ou número do pedido"></div>
             <div class="campo-gestao"><label for="filtroIntervalo">Intervalo</label><select id="filtroIntervalo"><option value="">Todos os intervalos</option><option>Primeiro intervalo</option><option>Segundo intervalo</option></select></div>
-            <div class="campo-gestao"><label for="filtroStatus">Situação</label><select id="filtroStatus"><option value="">Todas as situações</option><option value="pendente">Aguardando preparo</option><option value="pronto">Pronto para retirada</option><option value="entregue">Entregue</option></select></div>
+            <div class="campo-gestao"><label for="filtroStatus">Situação</label><select id="filtroStatus"><option value="">Todas as situações</option><option value="pendente">Aguardando preparo</option><option value="pronto">Pronto para retirada</option><option value="concluido">Concluído</option><option value="cancelado">Cancelado</option></select></div>
         </div>
         <p id="mensagemPainel" role="status" aria-live="polite" hidden></p>
         <div class="table-wrap"><table><caption id="contagemPedidos">Carregando pedidos…</caption><thead><tr><th scope="col">Pedido / aluno</th><th scope="col">Retirada</th><th scope="col">Valor</th><th scope="col">Situação</th><th scope="col">Ação</th></tr></thead><tbody id="listaPedidos"></tbody></table></div>
         <div class="vazio-gestao" id="vazioPedidos" hidden><strong>Nenhum pedido encontrado.</strong><p>Altere os filtros ou aguarde um novo pedido.</p><button type="button" id="limparFiltrosPedidos" class="btn secundario pequeno">Limpar filtros</button></div>
-        <p class="ajuda">Inclui exemplos e, quando disponível, o último pedido feito neste navegador. A sincronização entre dispositivos depende do banco.</p>
+        <p class="ajuda">Os pedidos aparecerão aqui quando essa parte da API for conectada ao banco.</p>
     </section>
     <section class="painel painel-topo"><div><h2>Alunos e pendências</h2><p>Consulte valores em aberto e registre recebimentos de teste.</p></div><a href="alunosdevendo.html" class="btn secundario">Consultar alunos</a></section>
+    <section aria-labelledby="tituloCadastros">
+        <div class="painel-topo"><div><h2 id="tituloCadastros">Cadastros e consultas</h2><p>Estas áreas estão prontas para receber os próximos endpoints do banco.</p></div></div>
+        <div class="grade-atalhos">
+            <a class="cartao-atalho" href="gerenciaralunos.html"><strong>Gerenciar alunos</strong><span>Cadastrar e consultar estudantes.</span></a>
+            <a class="cartao-atalho" href="gerenciarprodutos.html"><strong>Gerenciar produtos</strong><span>Preparar cardápio, preços e estoque.</span></a>
+            <a class="cartao-atalho" href="vincularaluno.html"><strong>Vincular responsáveis</strong><span>Relacionar responsáveis e alunos.</span></a>
+            <a class="cartao-atalho" href="detalhepedido.html"><strong>Consultar pedido</strong><span>Ver itens e atualizar a situação.</span></a>
+        </div>
+    </section>
 </main>
 </div>
-<noscript>Ative o JavaScript para visualizar esta demonstração.</noscript>
+<noscript>Ative o JavaScript para visualizar esta página.</noscript>
+<script src="../static/js/navegacao-perfil.js"></script>
+<script src="../static/js/logout.js"></script>
 </body>
 </html>

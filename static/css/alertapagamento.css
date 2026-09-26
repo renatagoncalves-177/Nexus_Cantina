@@ -93,13 +93,20 @@ h1 {
     gap: 10px;
 }
 
-.acoes a {
+.acoes a,
+.acoes button {
     min-height: 47px;
     display: grid;
     place-items: center;
     border-radius: 10px;
+    font: inherit;
     font-weight: 700;
     text-decoration: none;
+    cursor: pointer;
+}
+
+.acoes [hidden] {
+    display: none;
 }
 
 .botao-principal {
@@ -108,8 +115,24 @@ h1 {
 }
 
 .botao-secundario {
+    background: #fff;
     border: 1px solid #d1d5db;
     color: #4b5563;
+}
+
+.botao-perigo {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #b91c1c;
+}
+
+.confirmacao-card.cancelado .icone-sucesso {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.confirmacao-card.cancelado .etiqueta {
+    color: #6b7280;
 }
 
 @media (max-width: 520px) {

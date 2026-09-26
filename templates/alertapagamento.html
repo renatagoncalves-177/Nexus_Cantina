@@ -7,13 +7,13 @@
     <title>Nexus Cantina - Pedido realizado</title>
 </head>
 
-<body>
+<body data-perfis="aluno,responsavel">
     <main class="confirmacao-pagina">
         <section class="confirmacao-card">
-            <div class="icone-sucesso" aria-hidden="true">✓</div>
-            <span class="etiqueta">PEDIDO CONFIRMADO</span>
-            <h1>Seu pedido foi realizado!</h1>
-            <p class="mensagem-principal">
+            <div class="icone-sucesso" id="iconePedido" aria-hidden="true">✓</div>
+            <span class="etiqueta" id="statusPedido">PEDIDO CONFIRMADO</span>
+            <h1 id="tituloPedido">Seu pedido foi realizado!</h1>
+            <p class="mensagem-principal" id="mensagemPedido">
                 Agora é só retirar seu pedido na cantina no intervalo escolhido.
             </p>
 
@@ -26,19 +26,26 @@
                     <span>Total</span>
                     <strong id="totalConfirmado">R$ 0,00</strong>
                 </div>
+                <div>
+                    <span>Saldo após o pedido</span>
+                    <strong id="saldoConfirmado">—</strong>
+                </div>
             </div>
 
-            <p class="aviso-dia-seguinte">
-                Um novo pedido para este intervalo ficará disponível amanhã.
+            <p class="aviso-dia-seguinte" id="avisoPedido" role="status" aria-live="polite">
+                Você pode alterar ou cancelar este pedido enquanto ele não estiver concluído.
             </p>
 
-            <div class="acoes">
-                <a href="telaaluno.html" class="botao-principal">Voltar ao início</a>
-                <a href="pedidoaluno.html" class="botao-secundario">Ver produtos</a>
+            <div class="acoes" id="acoesPedido">
+                <button type="button" id="alterarPedido" class="botao-secundario">Alterar pedido</button>
+                <button type="button" id="cancelarPedido" class="botao-perigo">Cancelar pedido</button>
+                <a href="telaaluno.html" class="botao-principal" data-inicio-perfil>Voltar ao início</a>
             </div>
         </section>
     </main>
 
+    <script src="../static/js/gestao-dados.js"></script>
     <script src="../static/js/alertapagamento.js"></script>
+    <script src="../static/js/navegacao-perfil.js"></script>
 </body>
 </html>

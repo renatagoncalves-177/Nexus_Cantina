@@ -3,64 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/loginresponsavel.css">
-    <title>Nexus Cantina - Login Responsável</title>
-
+    <title>Login do responsável - Nexus Cantina</title>
+    <link rel="stylesheet" href="../static/css/login.css">
+    <script src="../static/js/login.js" defer></script>
 </head>
-
 <body>
-
     <main class="container-login">
+        <section class="card-login" aria-labelledby="tituloLogin">
+            <a href="escolhausuario.html" class="voltar-perfil">← Escolher outro perfil</a>
+            <header class="logo-area">
+                <div class="logo" aria-hidden="true">CANTINA</div>
+                <h1 id="tituloLogin">Login do responsável</h1>
+                <p>Acesse sua conta para acompanhar os alunos vinculados.</p>
+            </header>
 
-        <section class="card-login">
-
-            <div class="logo-area">
-                <div class="logo">
-                    CANTINA
-                </div>
-
-                <h1>Login do Responsável</h1>
-                <p>Acesse a conta para acompanhar o aluno</p>
-            </div>
-
-            <form id="formLogin">
-
+            <form id="formLogin" data-tipo="responsavel" data-destino="telaresponsavel.html">
                 <div class="campo">
-                    <label for="matricula">Matrícula do aluno</label>
-
-                    <input type="text" id="matricula" placeholder="Digite a matrícula" autocomplete="off">
-                </div>
-
-                <div class="campo">
-                    <label for="email">E-mail</label>
-
-                    <input type="email"id="email"placeholder="Digite seu e-mail"autocomplete="off">
+                    <label for="identificador">E-mail</label>
+                    <input type="email" id="identificador" name="email" placeholder="Digite seu e-mail"
+                        autocomplete="username" required maxlength="160" data-alerta-email>
                 </div>
 
                 <div class="campo">
                     <label for="senha">Senha</label>
-
-                    <input type="password"id="senha"placeholder="Digite sua senha">
+                    <div class="senha-linha">
+                        <input type="password" id="senha" name="senha" placeholder="Digite sua senha"
+                            autocomplete="current-password" required maxlength="128">
+                        <button type="button" class="mostrar-senha" data-mostrar-senha aria-controls="senha" aria-pressed="false">Mostrar</button>
+                    </div>
                 </div>
 
-                <button type="submit" class="botao-login">
-                    Entrar
-                </button>
-
-                <div id="mensagem" class="mensagem"></div>
-
+                <button type="submit" class="botao-login" data-botao-login>Entrar</button>
+                <p id="mensagemLogin" class="mensagem" role="status" aria-live="polite" hidden></p>
             </form>
 
-            <div class="rodape-login">
-                Cantina • Área do Responsável
-            </div>
-
+            <footer class="rodape-login">Nexus Cantina • Área do responsável</footer>
         </section>
-
-        
     </main>
-
-        <script src="../static/js/loginresponsavel.js"></script>
-
 </body>
 </html>

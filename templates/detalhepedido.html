@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do pedido - Nexus Cantina</title>
+    <link rel="stylesheet" href="../static/css/gestao.css">
+    <script src="../static/js/api-admin.js" defer></script>
+    <script src="../static/js/detalhepedido.js" defer></script>
+</head>
+<body data-perfis="admin">
+<header class="cabecalho-gestao">
+    <a href="telaadmin.html" class="marca-gestao"><span class="logo-gestao">CANTINA</span>Nexus Cantina</a>
+    <nav aria-label="Navegação principal">
+        <a href="telaadmin.html">Painel</a>
+        <a href="detalhepedido.html" aria-current="page">Consultar pedido</a>
+        <a href="loginadmin.html" class="sair-gestao" data-logout>Sair</a>
+    </nav>
+</header>
+<main class="conteudo-gestao">
+    <div class="topo-gestao"><div><span class="eyebrow">PEDIDOS</span><h1>Detalhes do pedido</h1><p class="subtitulo">Consulte os itens e atualize a situação de um pedido específico.</p></div></div>
+    <p class="demo-nota"><strong>Preparada para o banco.</strong> Esta tela usará <code>GET /api/pedidos/{id}</code> e <code>PATCH /api/pedidos/{id}</code>. Os endpoints ainda não foram criados.</p>
+    <section class="painel">
+        <form id="formBuscarPedido" class="filtros busca-pedido">
+            <div class="campo-gestao"><label for="buscarPedidoId">Número do pedido</label><input id="buscarPedidoId" required placeholder="Ex.: 123"></div>
+            <button type="submit" class="btn">Consultar</button>
+        </form>
+        <p id="mensagemPedido" role="status" aria-live="polite" hidden></p>
+    </section>
+    <section class="painel" id="conteudoPedido" hidden aria-labelledby="tituloResumoPedido">
+        <div class="painel-topo"><div><h2 id="tituloResumoPedido">Pedido <span id="pedidoNumero">—</span></h2><p>Confira as informações retornadas pela API.</p></div></div>
+        <div class="resumo-pedido-grid">
+            <div><span>Aluno</span><strong id="pedidoAluno">—</strong></div>
+            <div><span>Intervalo</span><strong id="pedidoIntervalo">—</strong></div>
+            <div><span>Total</span><strong id="pedidoTotal">—</strong></div>
+        </div>
+        <div class="table-wrap"><table><caption>Itens do pedido</caption><thead><tr><th>Produto</th><th>Quantidade</th><th>Subtotal</th></tr></thead><tbody id="itensPedido"></tbody></table></div>
+        <form id="formStatusPedido" class="filtros">
+            <div class="campo-gestao"><label for="pedidoStatus">Situação</label><select id="pedidoStatus"><option value="pendente">Aguardando preparo</option><option value="pronto">Pronto para retirada</option><option value="concluido">Concluído</option><option value="cancelado">Cancelado</option></select></div>
+            <button type="submit" class="btn">Salvar situação</button>
+        </form>
+    </section>
+</main>
+<script src="../static/js/navegacao-perfil.js"></script>
+<script src="../static/js/logout.js"></script>
+</body>
+</html>

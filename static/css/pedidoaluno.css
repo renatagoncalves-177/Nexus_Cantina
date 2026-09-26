@@ -10,37 +10,37 @@
             color: #222;
         }
 
-        header {
-            height: 72px;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 55px;
-            border-bottom: 1px solid #e8e8e8;
-        }
+header {
+    height: 72px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 55px;
+    border-bottom: 1px solid #e8e8e8;
+}
 
-        .marca {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-        }
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
 
-        .logo {
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            background: #fff2f2;
-            border: 2px solid #ef4444;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 8px;
-            line-height: 9px;
-            font-weight: bold;
-            color: #ef4444;
-        }
+.logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #fff2f2;
+    border: 2px solid #ef4444;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 8px;
+    line-height: 9px;
+    font-weight: bold;
+    color: #ef4444;
+}
 
         .marca h2 {
             font-size: 17px;
@@ -49,45 +49,64 @@
         nav {
             display: flex;
             gap: 30px;
+            flex-wrap: wrap;
         }
 
-        nav a {
-            text-decoration: none;
-            color: #555;
-            font-size: 14px;
-            font-weight: 600;
-        }
+nav a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    font-weight: 600;
+}
 
-        nav a:hover {
-            color: #ef4444;
-        }
+nav a:hover {
+    color: #ef4444;
+}
 
-        main {
-            max-width: 1150px;
-            margin: auto;
-            padding: 45px 35px;
-        }
+nav a[aria-current="page"] { color: #ef4444; }
 
-        .titulo {
-            margin-bottom: 30px;
-        }
+main {
+    max-width: 1150px;
+    margin: auto;
+    padding: 45px 35px;
+}
 
-        .titulo span {
-            color: #ef4444;
-            font-size: 13px;
-            font-weight: bold;
-        }
+.titulo {
+    margin-bottom: 30px;
+}
 
-        .titulo h1 {
-            font-size: 28px;
-            margin-top: 6px;
-        }
+.titulo span {
+    color: #ef4444;
+    font-size: 13px;
+    font-weight: bold;
+}
 
-        .produtos {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
-        }
+.titulo h1 {
+    font-size: 28px;
+    margin-top: 6px;
+}
+
+.produtos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.estado-vazio {
+    grid-column: 1 / -1;
+    padding: 38px 24px;
+    border: 1px dashed #d4d4d8;
+    border-radius: 14px;
+    background: #fff;
+    text-align: center;
+}
+
+.estado-vazio h2 {
+    margin-bottom: 8px;
+}
+.estado-vazio p {
+    color: #71717a;
+}
 
         .produto {
             background: white;
@@ -187,7 +206,12 @@
 
         @media (max-width: 600px) {
             header {
-                padding: 0 20px;
+                height: auto;
+                min-height: 72px;
+                padding: 14px 20px;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
             }
 
             .marca h2 {
@@ -197,4 +221,6 @@
             .produtos {
                 grid-template-columns: 1fr;
             }
+
+            nav { gap: 14px; }
         }

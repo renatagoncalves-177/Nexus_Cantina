@@ -45,6 +45,7 @@
         nav {
             display: flex;
             gap: 30px;
+            flex-wrap: wrap;
         }
 
         nav a {
@@ -53,6 +54,8 @@
             font-size: 14px;
             font-weight: 600;
         }
+
+        nav a[aria-current="page"] { color: #ef4444; }
 
         main {
             max-width: 950px;
@@ -142,6 +145,10 @@
         }
 
         .continuar {
+            width: 100%;
+            border: 0;
+            cursor: pointer;
+            font: inherit;
             display: block;
             text-align: center;
             text-decoration: none;
@@ -167,4 +174,19 @@
         .vazio a {
             color: #ef4444;
             font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                height: auto;
+                min-height: 72px;
+                padding: 14px 20px;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav { gap: 14px; }
+            main { padding: 30px 20px; }
+            .item { align-items: flex-start; gap: 16px; }
         }

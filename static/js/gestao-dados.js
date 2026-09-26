@@ -1,8 +1,8 @@
-/* Dados de demonstração. A autorização e os valores reais devem vir do backend. */
+/* Operações locais temporárias. Os dados reais serão fornecidos pelo backend. */
 (function () {
     "use strict";
-    const CHAVE = "nexusGestaoDemo.v1";
-    const SESSAO = "nexusAdminDemo";
+    const CHAVE = "nexusGestaoLocal.v2";
+    const LIMITE_NEGATIVO = -25000;
     const moeda = valor => (valor / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     const hoje = () => {
         const d = new Date();
@@ -19,34 +19,29 @@
     };
     function inicial() {
         return {
-            versao: 1,
-            alunos: [
-                { id: "2026001", nome: "Carlos Silva", turma: "1º A", saldo: 11000, divida: 0 },
-                { id: "2026002", nome: "Ana Oliveira", turma: "2º B", saldo: 0, divida: 1850 },
-                { id: "2026003", nome: "João Santos", turma: "1º A", saldo: 0, divida: 3200 },
-                { id: "2026004", nome: "Luiza Costa", turma: "3º A", saldo: 2500, divida: 0 }
-            ],
-            pedidos: [
-                { id: "DEMO-001", aluno: "Carlos Silva", data: hoje(), intervalo: "Primeiro intervalo", total: 850, descricao: "1 sanduíche • 1 suco", status: "pendente", exemplo: true },
-                { id: "DEMO-002", aluno: "Ana Oliveira", data: hoje(), intervalo: "Segundo intervalo", total: 600, descricao: "1 salgado • 1 água", status: "pendente", exemplo: true },
-                { id: "DEMO-003", aluno: "Luiza Costa", data: hoje(), intervalo: "Primeiro intervalo", total: 500, descricao: "1 pão de queijo • 1 suco", status: "pronto", exemplo: true }
-            ],
+            versao: 2,
+            alunos: [],
+            pedidos: [],
             recargas: [], recebimentos: [], operacoes: []
         };
     }
     function validar(d) {
-        if (!d || d.versao !== 1 || !["alunos", "pedidos", "recargas", "recebimentos", "operacoes"].every(k => Array.isArray(d[k])) ||
-            !d.alunos.every(a => a && typeof a.id === "string" && typeof a.nome === "string" && Number.isSafeInteger(a.saldo) && a.saldo >= 0 && Number.isSafeInteger(a.divida) && a.divida >= 0)) {
-            throw new Error("Os dados de demonstração estão inválidos. Não foi possível carregar esta tela.");
+        if (!d || d.versao !== 2 || !["alunos", "pedidos", "recargas", "recebimentos", "operacoes"].every(k => Array.isArray(d[k])) ||
+            !d.alunos.every(a => a && typeof a.id === "string" && typeof a.nome === "string" && Number.isSafeInteger(a.saldo) && a.saldo >= LIMITE_NEGATIVO && Number.isSafeInteger(a.divida) && a.divida >= 0)) {
+            throw new Error("Os dados locais estão inválidos. Não foi possível carregar esta tela.");
         }
         return d;
     }
     function ler() {
         try {
             const salvo = localStorage.getItem(CHAVE);
-            return salvo ? validar(JSON.parse(salvo)) : inicial();
+            const dados = salvo ? validar(JSON.parse(salvo)) : inicial();
+            dados.pedidos.forEach(pedido => {
+                if (pedido.status === "entregue") pedido.status = "concluido";
+            });
+            return dados;
         } catch (_) {
-            throw new Error("Não foi possível ler os dados de demonstração. Verifique o armazenamento do navegador.");
+            throw new Error("Não foi possível ler os dados locais. Verifique o armazenamento do navegador.");
         }
     }
     function gravar(d) {
@@ -79,6 +74,17 @@
             d.recebimentos.unshift({ id: operacao, alunoId, valor, data: new Date().toISOString() });
         });
     }
+    function debitarPedido(alunoId, pedidoId, valor) {
+        if (!Number.isSafeInteger(valor) || valor <= 0) throw new Error("O total do pedido é inválido.");
+        return alterar("pedido-debito-" + pedidoId, d => {
+            const aluno = d.alunos.find(a => a.id === alunoId);
+            if (!aluno) throw new Error("Aluno não encontrado.");
+            if (aluno.saldo - valor < LIMITE_NEGATIVO) {
+                throw new Error("Este pedido ultrapassa o limite de saldo negativo de R$ 250,00.");
+            }
+            aluno.saldo -= valor;
+        });
+    }
     function importarUltimoPedido() {
         let pedido;
         try { pedido = JSON.parse(localStorage.getItem("ultimoPedido") || "null"); } catch (_) { return; }
@@ -88,11 +94,14 @@
         const chave = "local-" + String(pedido.id);
         const d = ler();
         if (d.pedidos.some(p => p.id === chave)) return;
+        const statusPedido = ["pendente", "pronto", "concluido", "cancelado"].includes(pedido.status)
+            ? pedido.status
+            : "pendente";
         d.pedidos.unshift({
             id: chave, aluno: "Aluno não identificado", data: pedido.data,
             intervalo: pedido.intervalo, total: Math.round(pedido.total * 100),
             descricao: pedido.itens.map(item => String(item.quantidade) + " × " + String(item.nome)).join(" • "),
-            status: "pendente", exemplo: false
+            status: statusPedido, exemplo: false
         });
         gravar(d);
     }
@@ -100,31 +109,55 @@
         const d = ler();
         const p = d.pedidos.find(item => item.id === pedidoId);
         if (!p || p.status !== esperado) throw new Error("Esse pedido foi atualizado. Confira a lista novamente.");
-        const proximo = { pendente: "pronto", pronto: "entregue" }[esperado];
-        if (!proximo) throw new Error("Esse pedido já foi entregue.");
+        const proximo = { pendente: "pronto", pronto: "concluido" }[esperado];
+        if (!proximo) throw new Error("Esse pedido já foi concluído ou cancelado.");
         p.status = proximo;
         gravar(d);
+        if (pedidoId.startsWith("local-")) {
+            try {
+                const ultimo = JSON.parse(localStorage.getItem("ultimoPedido") || "null");
+                if (ultimo && "local-" + String(ultimo.id) === pedidoId) {
+                    ultimo.status = proximo;
+                    localStorage.setItem("ultimoPedido", JSON.stringify(ultimo));
+                }
+            } catch (_) { /* O painel continua atualizado mesmo sem o resumo local. */ }
+        }
     }
-    function autenticado() {
-        try {
-            const s = JSON.parse(sessionStorage.getItem(SESSAO) || "null");
-            return s?.tipo === "admin-demo" && Number.isFinite(s.expira) && s.expira > Date.now();
-        } catch (_) { return false; }
-    }
-    function entrar(email, senha) {
-        if (email.trim().toLowerCase() !== "admin@nexus.test" || senha !== "Cantina123!") throw new Error("E-mail ou senha de demonstração incorretos.");
-        try { sessionStorage.setItem(SESSAO, JSON.stringify({ tipo: "admin-demo", expira: Date.now() + 8 * 60 * 60 * 1000 })); }
-        catch (_) { throw new Error("Permita o armazenamento da sessão neste navegador para entrar."); }
+    function cancelarPedido(pedidoId, motivo) {
+        let ultimo;
+        try { ultimo = JSON.parse(localStorage.getItem("ultimoPedido") || "null"); }
+        catch (_) { throw new Error("Não foi possível ler o pedido."); }
+        if (!ultimo || String(ultimo.id) !== String(pedidoId)) throw new Error("Pedido não encontrado.");
+        const chave = "local-" + String(pedidoId);
+        const d = ler();
+        const pedidoPainel = d.pedidos.find(p => p.id === chave);
+        const statusAtual = pedidoPainel?.status || ultimo.status || "pendente";
+        if (["concluido", "entregue"].includes(statusAtual)) {
+            throw new Error("Este pedido já foi concluído e não pode mais ser alterado ou cancelado.");
+        }
+        if (statusAtual !== "cancelado") {
+            const operacaoDebito = "pedido-debito-" + pedidoId;
+            const operacaoEstorno = "pedido-estorno-" + pedidoId;
+            if (d.operacoes.includes(operacaoDebito) && !d.operacoes.includes(operacaoEstorno)) {
+                const aluno = d.alunos.find(a => a.id === ultimo.alunoId);
+                const total = Number.isSafeInteger(ultimo.totalCentavos)
+                    ? ultimo.totalCentavos
+                    : Math.round(Number(ultimo.total) * 100);
+                if (!aluno || !Number.isSafeInteger(total) || total <= 0) throw new Error("Não foi possível estornar o saldo deste pedido.");
+                aluno.saldo += total;
+                d.operacoes.push(operacaoEstorno);
+            }
+            if (pedidoPainel) pedidoPainel.status = "cancelado";
+            ultimo.status = "cancelado";
+            ultimo.canceladoParaAlteracao = motivo === "alterar";
+            ultimo.canceladoEm = new Date().toISOString();
+            gravar(d);
+            localStorage.setItem("ultimoPedido", JSON.stringify(ultimo));
+        }
+        return ultimo;
     }
     function exigirAdmin() {
-        if (!autenticado()) {
-            window.location.replace("loginadmin.html");
-            return false;
-        }
         document.querySelector("[data-area-admin]")?.removeAttribute("hidden");
-        document.querySelectorAll("[data-sair-admin]").forEach(el => el.addEventListener("click", () => {
-            sessionStorage.removeItem(SESSAO);
-        }));
         return true;
     }
     function aviso(el, texto, erro = false) {
@@ -139,5 +172,5 @@
         return el;
     }
     function normalizar(valor) { return String(valor).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
-    window.NexusGestao = { ler, recarregar, receber, importarUltimoPedido, avancarPedido, entrar, autenticado, exigirAdmin, aviso, elemento, normalizar, moeda, centavos, hoje, id };
+    window.NexusGestao = { ler, recarregar, receber, debitarPedido, importarUltimoPedido, avancarPedido, cancelarPedido, exigirAdmin, aviso, elemento, normalizar, moeda, centavos, hoje, id, LIMITE_NEGATIVO };
 }());

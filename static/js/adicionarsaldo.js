@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     const G = window.NexusGestao;
-    const ALUNO = "2026001";
+    const ALUNO = new URLSearchParams(window.location.search).get("aluno");
     const valor = document.getElementById("valorRecarga");
     const mensagem = document.getElementById("mensagemRecarga");
     const dialog = document.getElementById("dialogRecarga");
@@ -20,7 +20,7 @@
         try {
             const dados = G.ler();
             const aluno = dados.alunos.find(a => a.id === ALUNO);
-            if (!aluno) throw new Error("Aluno de demonstração não encontrado.");
+            if (!aluno) throw new Error("Nenhum aluno foi selecionado. A integração dos alunos ainda não foi concluída.");
             let adicionar = 0;
             try { adicionar = G.centavos(valor.value); } catch (_) { /* Campo ainda vazio. */ }
             if (adicionar < 100 || adicionar > 50000) adicionar = 0;
@@ -53,8 +53,10 @@
         try {
             const total = G.centavos(valor.value);
             if (total < 100 || total > 50000) throw new Error("Escolha um valor entre R$ 1,00 e R$ 500,00.");
+            const aluno = G.ler().alunos.find(a => a.id === ALUNO);
+            if (!aluno) throw new Error("Nenhum aluno foi selecionado.");
             revisao = { valor: total, id: G.id() };
-            document.getElementById("revisaoRecarga").textContent = "Adicionar " + G.moeda(total) + " ao saldo de Carlos Silva (matrícula 2026001).";
+            document.getElementById("revisaoRecarga").textContent = "Adicionar " + G.moeda(total) + " ao saldo de " + aluno.nome + ".";
             erroDialog.hidden = true;
             confirmar.disabled = false;
             dialog.showModal();
@@ -69,7 +71,7 @@
         try {
             const dados = G.recarregar(ALUNO, revisao.valor, revisao.id);
             const novoSaldo = dados.alunos.find(a => a.id === ALUNO).saldo;
-            G.aviso(mensagem, "Recarga de teste de " + G.moeda(revisao.valor) + " registrada. Saldo disponível: " + G.moeda(novoSaldo) + ".");
+            G.aviso(mensagem, "Recarga de " + G.moeda(revisao.valor) + " registrada. Saldo disponível: " + G.moeda(novoSaldo) + ".");
             valor.value = "";
             dialog.close();
             renderizar();

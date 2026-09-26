@@ -8,19 +8,19 @@
 
 </head>
 
-<body>
+<body data-perfis="aluno">
 
 <header>
     <div class="marca">
-        <div class="logo">>CANTINA</div>
-        <h2>Cantina</h2>
+        <div class="logo">CANTINA</div>
+        <h2>Nexus Cantina</h2>
     </div>
 
     <nav>
         <a href="telaaluno.html">Início</a>
         <a href="pedidoaluno.html">Produtos</a>
         <a href="carrinho.html">Carrinho</a>
-        <a href="loginaluno.html" class="sair">Sair</a>
+        <a href="loginaluno.html" class="sair" data-logout>Sair</a>
     </nav>
 </header>
 
@@ -28,19 +28,19 @@
 
     <section class="boas-vindas">
         <span>Área do aluno</span>
-        <h1>Olá, Carlos!</h1>
+        <h1>Olá, <span data-nome-usuario>aluno(a)</span>!</h1>
     </section>
 
     <section class="cards">
 
         <div class="card saldo">
-            <p>Saldo disponível (demonstração)</p>
-            <h2 id="saldoDisponivel">R$ 110,00</h2>
+            <p>Saldo disponível</p>
+            <h2 id="saldoDisponivel">—</h2>
         </div>
 
         <div class="card gasto">
             <p>Gastos realizados</p>
-            <h2>R$ 29,00</h2>
+            <h2>—</h2>
         </div>
 
     </section>
@@ -56,7 +56,8 @@
 
 </main>
 
-    <script src="../static/js/gestao-dados.js"></script>
-    <script src="../static/js/saldo-demo.js"></script>
+    <script src="../static/js/usuario-atual.js"></script>
+    <script src="../static/js/navegacao-perfil.js"></script>
+    <script src="../static/js/logout.js"></script>
 </body>
 </html>
